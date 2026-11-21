@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Staff inbox · Chithu Foundation</title>
+<link rel="icon" href="/admin-assets/logo-mark.png">
+<style>
+:root{--forest:#0c1f14;--green:#1d7a45;--lime:#aae75e;--paper:#fff;--bg:#f1f6ee;--line:#d9e4d4;--slate:#5a6e60}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:#13261a}
+header{background:linear-gradient(135deg,#1c5a38,#0f2f1d);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header img{width:40px;height:40px;border-radius:12px}header h1{font-size:1.1rem;margin:0;flex:1}
+button,.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;cursor:pointer;color:#13261a;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{border-color:var(--green)}.primary{background:var(--lime);border-color:var(--lime);color:#0f2a17}
+header button,header .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+main{max-width:920px;margin:0 auto;padding:22px 16px 60px}
+#login{max-width:380px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:0 20px 50px -30px rgba(20,60,35,.6)}
+#login h2{margin:0 0 6px}#login p{color:var(--slate);margin:0 0 16px}
+input{width:100%;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+.err{color:#b3261e;min-height:1.3em;font-size:.92rem;margin:0 0 8px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}.bar .count{margin-left:auto;color:var(--slate);font-size:.92rem}
+.on{background:var(--lime);border-color:var(--lime)}
+.msg{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px;border-left:5px solid var(--lime)}
+.msg.handled{border-left-color:#c8d3c4;opacity:.78}
+.top{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}.top b{font-size:1.05rem}.tag{font-size:.78rem;font-weight:600;background:#e6f3dc;color:#1d5a2c;padding:2px 10px;border-radius:999px}
+.meta{color:var(--slate);font-size:.9rem;margin:2px 0 8px}.meta a{color:var(--green)}
+.body{white-space:pre-wrap;word-break:break-word;margin:8px 0 12px}.acts{display:flex;gap:8px;flex-wrap:wrap}.acts button{padding:5px 13px;font-size:.9rem}
+.empty{text-align:center;color:var(--slate);padding:40px 0}
+</style></head><body>
+<section id="login" hidden>
+  <h2>Staff inbox</h2><p>Chithu Foundation website messages.</p>
+  <form id="lf"><input id="pw" type="password" placeholder="Password" autocomplete="current-password" required><div class="err" id="lerr" role="alert"></div><button class="primary" style="width:100%">Sign in</button></form>
+</section>
+<div id="app" hidden>
+  <header><img src="/admin-assets/logo-mark.png" alt=""><h1>Staff inbox</h1><a class="btn" href="/api/admin/export.csv">Export CSV</a><a class="btn" href="/">View site</a><button id="out">Sign out</button></header>
+  <main>
+    <div class="bar"><button data-f="all" class="on">All</button><button data-f="new">New</button><button data-f="handled">Handled</button><button id="refresh">Refresh</button><span class="count" id="count"></span></div>
+    <div id="list"></div>
+  </main>
+</div>
+<script>
+const $=s=>document.querySelector(s); let all=[], filter='all';
+async function api(url,opt){const r=await fetch(url,Object.assign({headers:{'Content-Type':'application/json'},credentials:'same-origin'},opt)); const j=await r.json().catch(()=>({})); if(r.status===401&&url!=='/api/admin/login')show(false); return {r,j};}
+function show(ok){$('#login').hidden=ok;$('#app').hidden=!ok; if(ok)load(); else $('#pw').focus();}
+async function load(){const {j}=await api('/api/admin/messages'); if(j.ok){all=j.messages;render();}}
+function render(){
+  const rows=all.filter(m=>filter==='all'||m.status===filter), list=$('#list'); list.textContent='';
+  $('#count').textContent=all.filter(m=>m.status==='new').length+' new · '+all.length+' total';
+  if(!rows.length){const d=document.createElement('div');d.className='empty';d.textContent='No messages here yet.';list.append(d);return;}
+  for(const m of rows){
+    const c=document.createElement('article');c.className='msg '+m.status;
+    const top=document.createElement('div');top.className='top';
+    const n=document.createElement('b');n.textContent=m.name;const t=document.createElement('span');t.className='tag';t.textContent=m.type||'Other';top.append(n,t);
+    const meta=document.createElement('div');meta.className='meta';
+    const when=new Date(m.created_at.replace(' ','T')+'Z').toLocaleString();
+    const em=document.createElement('a');em.href='mailto:'+m.email;em.textContent=m.email;meta.append(when+' · ',em);
+    if(m.phone){const p=document.createElement('a');p.href='tel:'+m.phone.replace(/[^\d+]/g,'');p.textContent=m.phone;meta.append(' · ',p);}
+    const body=document.createElement('div');body.className='body';body.textContent=m.message;
+    const acts=document.createElement('div');acts.className='acts';
+    const h=document.createElement('button');h.textContent=m.status==='new'?'Mark handled':'Mark as new';
+    h.onclick=async()=>{await api('/api/admin/messages/'+m.id,{method:'PATCH',body:JSON.stringify({status:m.status==='new'?'handled':'new'})});load();};
+    const d=document.createElement('button');d.textContent='Delete';
+    d.onclick=async()=>{if(confirm('Delete this message permanently?')){await api('/api/admin/messages/'+m.id,{method:'DELETE'});load();}};
+    acts.append(h,d);c.append(top,meta,body,acts);list.append(c);
+  }
+}
+$('#lf').onsubmit=async e=>{e.preventDefault();$('#lerr').textContent='';const {j}=await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('#pw').value})});
+  if(j.ok){$('#pw').value='';show(true);}else $('#lerr').textContent=j.error||'Could not sign in.';};
+$('#out').onclick=async()=>{await api('/api/admin/logout',{method:'POST'});show(false);};
+$('#refresh').onclick=load;
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('on',x===b));render();});
+api('/api/admin/session').then(({j})=>show(!!j.ok));
+</script></body></html>

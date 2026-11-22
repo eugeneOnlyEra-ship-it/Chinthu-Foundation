@@ -6,9 +6,11 @@ chithu-foundation/
 │   ├── index.html       all pages, styles and scripts
 │   ├── config.js        tells the site where the backend is
 │   └── images/          logo and photos
+├── package.json         root: install with `npm install`, run with `npm start`
+├── DEPLOY-RAILWAY.md    deployment guide
 └── backend/             small Node.js server (kept for future features)
     ├── server.js        receives the contact form and emails it to the organisation
-    ├── package.json
+    ├── package.json     backend dependencies
     └── .env.example     settings template
 ```
 
@@ -18,27 +20,30 @@ Visitor fills in the form → website sends it to the backend → backend **emai
 Nothing is stored on the server; the email is the record. If the email cannot be sent, the visitor sees
 "Open in email / WhatsApp / Copy" buttons instead, so no message is lost.
 
-## Run it
-1. Install Node.js 18 or newer.
-2. ```
-   cd backend
-   npm install
-   cp .env.example .env
+## Run it on your computer
+1. Install Node.js 22 (`nvm use` reads `.nvmrc`).
+2. In the project folder (where this README is):
    ```
-3. Open `.env` and fill in the email settings (see below).
+   npm install
+   cp backend/.env.example backend/.env
+   ```
+3. Open `backend/.env` and fill in the email settings (see below).
 4. `npm start`, then open http://localhost:3000
 
-Try it without sending real email first: set `MAIL_DRY_RUN=true` in `.env`. The email is printed in the terminal.
+Try it without sending real email first: set `MAIL_DRY_RUN=true` in `backend/.env`. The email is printed in the terminal.
 
-## Email settings (in backend/.env)
-- `NOTIFY_EMAIL`: the organisation address that should receive messages.
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: the mailbox the server sends from.
-  - **Gmail / Google Workspace:** `smtp.gmail.com`, port `587`. Turn on 2-Step Verification, then create an
-    **App password** (Google Account → Security → App passwords) and use it as `SMTP_PASS`.
-  - Zoho: `smtp.zoho.com` · Brevo: `smtp-relay.brevo.com`: use the SMTP details from their dashboard.
-- `SMTP_FROM`: the sender name/address shown, for example `"Chithu Website <info@chithufoundation.org>"`.
+## Deploying
+See **DEPLOY-RAILWAY.md** for step-by-step Railway instructions.
 
-Use a dedicated organisation mailbox for sending, and keep `.env` private (it holds the password).
+## Email settings (backend/.env locally, "Variables" on Railway)
+- `NOTIFY_EMAIL`: the organisation address that receives messages.
+- One way to send:
+  - `RESEND_API_KEY` (resend.com) or `BREVO_API_KEY` (brevo.com): send over HTTPS and work on every Railway plan.
+  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: e.g. Gmail with an App password. Blocked on Railway's
+    Free/Trial/Hobby plans, but fine on your own computer or other hosts.
+- `MAIL_FROM`: the sender shown on the email (see DEPLOY-RAILWAY.md for what to use with each service).
+
+Keep `.env` and API keys private.
 
 ## Hosting them separately (optional)
 - `frontend/` on any static host (Netlify, GitHub Pages, cPanel...).

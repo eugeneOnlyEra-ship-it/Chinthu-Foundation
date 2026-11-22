@@ -1,0 +1,16 @@
+{
+  "name": "chithu-foundation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chithu Foundation website: static frontend served by a small Node backend that emails contact-form messages",
+  "workspaces": [
+    "backend"
+  ],
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
+  }
+}

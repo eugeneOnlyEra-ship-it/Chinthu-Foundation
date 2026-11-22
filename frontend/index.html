@@ -529,6 +529,12 @@ details.acc[open] summary .tile{background:var(--lime);color:var(--forest-900)}
 @media(prefers-reduced-motion:reduce){.org-line{animation:none}}
 [hidden]{display:none!important}
 
+.hint{font-size:.84rem;color:var(--slate);line-height:1.4;margin:0}
+.field label .req,.reqnote .req{color:#c2410c;font-style:normal;font-weight:700}
+.field label .opt{font-weight:400;color:var(--slate)}
+.reqnote{margin-top:16px}
+.outhelp{text-align:left;max-width:440px;margin:16px auto 0;padding-left:18px;display:grid;gap:5px}
+
 </style>
 </head>
 <body>
@@ -1015,17 +1021,18 @@ details.acc[open] summary .tile{background:var(--lime);color:var(--forest-900)}
           <p style="color:var(--slate);margin:0">Want to nominate a school, hospital, or public facility in Karonga for a clean-up campaign, request a farmer composting demonstration in your village, or partner with our team? Send us a message and we will respond promptly.</p>
           <form id="form" novalidate>
             <div class="frow">
-              <div class="field"><label for="fname">Full name</label><input id="fname" name="name" autocomplete="name"><div class="err" id="e-name"></div></div>
-              <div class="field"><label for="femail">Email address</label><input id="femail" name="email" type="email" autocomplete="email"><div class="err" id="e-email"></div></div>
+              <div class="field"><label for="fname">Full name <i class="req" aria-hidden="true">*</i></label><input id="fname" name="name" autocomplete="name" placeholder="e.g. Grace Phiri" aria-describedby="h-name e-name" required><div class="hint" id="h-name">Type your first and last name.</div><div class="err" id="e-name"></div></div>
+              <div class="field"><label for="femail">Email address <i class="req" aria-hidden="true">*</i></label><input id="femail" name="email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="h-email e-email" required><div class="hint" id="h-email">Type your own email address. This is where our team will reply to you.</div><div class="err" id="e-email"></div></div>
             </div>
             <div class="field" aria-hidden="true" style="position:absolute;left:-9999px;height:0;overflow:hidden"><label for="fweb">Leave this empty</label><input id="fweb" name="website" tabindex="-1" autocomplete="off"></div>
-            <div class="field"><label for="fphone">Phone / WhatsApp</label><input id="fphone" name="phone" type="tel" autocomplete="tel" placeholder="+265 …"></div>
-            <div class="field"><span class="lbl" id="typelbl">Institution / group type</span>
+            <div class="field"><label for="fphone">Phone / WhatsApp <span class="opt">(optional)</span></label><input id="fphone" name="phone" type="tel" autocomplete="tel" placeholder="+265 …" aria-describedby="h-phone"><div class="hint" id="h-phone">Add a number if you would like us to call or WhatsApp you.</div></div>
+            <div class="field"><span class="lbl" id="typelbl">Institution / group type</span><div class="hint">Tap the one that best describes you or your organisation.</div>
               <div class="chipset" role="group" aria-labelledby="typelbl" id="types">
                 <button type="button" class="chip" aria-pressed="true">School</button><button type="button" class="chip" aria-pressed="false">Hospital or Health Center</button><button type="button" class="chip" aria-pressed="false">Market</button><button type="button" class="chip" aria-pressed="false">Farming Club</button><button type="button" class="chip" aria-pressed="false">Individual Volunteer</button>
               </div></div>
-            <div class="field"><label for="fmsg">Message</label><textarea id="fmsg" name="message"></textarea><div class="err" id="e-msg"></div></div>
-            <div style="margin-top:18px"><button class="btn lime" type="submit">Send message <svg class="ic"><use href="#i-send"/></svg></button></div>
+            <div class="field"><label for="fmsg">Message <i class="req" aria-hidden="true">*</i></label><textarea id="fmsg" name="message" placeholder="e.g. We would like to start a clean-up club at our school in…" aria-describedby="h-msg e-msg" required></textarea><div class="hint" id="h-msg">Tell us what you need, such as a school clean-up, a composting demonstration or a partnership. Please mention your school, village or town.</div><div class="err" id="e-msg"></div></div>
+            <p class="hint reqnote"><i class="req" aria-hidden="true">*</i> Required. We will only use your details to reply to your message.</p>
+            <div style="margin-top:10px"><button class="btn lime" type="submit">Send message <svg class="ic"><use href="#i-send"/></svg></button></div>
           </form>
         </div>
         <div class="sent" id="sent" hidden>
@@ -1034,6 +1041,7 @@ details.acc[open] summary .tile{background:var(--lime);color:var(--forest-900)}
           <h3 id="sentH">Your message is ready</h3>
           <p style="color:var(--slate)" id="sentP">This page has no mail server, so choose how to send it to our team:</p>
           <div class="out" id="sentOut"><a class="btn dark" id="mailLink" href="#">Open in email</a><a class="btn dark" id="waLink" href="#" target="_blank" rel="noopener">Send on WhatsApp</a><button class="btn line" id="copyBtn" type="button">Copy message</button></div>
+          <ul class="hint outhelp" id="sentHelp"><li><b>Open in email</b> opens your email app with the message ready. Just press Send.</li><li><b>Send on WhatsApp</b> opens WhatsApp with the message ready to send to our team.</li><li><b>Copy message</b> copies the text so you can paste it anywhere.</li></ul>
           <p style="font-size:.88rem;color:var(--slate)" id="sentAlt">If nothing opens, email <b id="mailAlt"></b> or WhatsApp <b id="phoneAlt"></b>.</p>
           <button class="btn line sm" id="again" type="button">Write another message</button>
         </div>
@@ -1233,7 +1241,7 @@ const API_CONTACT=(window.CHITHU_API||'').replace(/\/$/,'')+'/api/contact'; /* t
 function showSent(ok){
   $('#sentH').textContent=ok?'Message sent. Thank you!':'Your message is ready';
   $('#sentP').textContent=ok?'Our team has received it and will reply to the email address you gave us.':'We could not reach our server just now, so choose how to send it to our team:';
-  $('#sentOut').hidden=ok; $('#sentAlt').hidden=ok;
+  $('#sentOut').hidden=ok; $('#sentAlt').hidden=ok; $('#sentHelp').hidden=ok;
   $('#formwrap').hidden=true; $('#sent').hidden=false;
   const b=$('#burst'); b.textContent='';
   if(!reduce)for(let i=0;i<16;i++){const l=document.createElement('i'),a=i/16*Math.PI*2,r=70+Math.random()*60; l.style.setProperty('--x',Math.cos(a)*r+'px'); l.style.setProperty('--y',Math.sin(a)*r-10+'px'); l.style.animationDelay=(Math.random()*.15)+'s'; b.appendChild(l);}

@@ -1,14 +1,14 @@
 {
   "name": "chithu-foundation-site",
   "version": "1.0.0",
-  "description": "Chithu Foundation website: static frontend plus a small Node/Express backend (contact form API, staff inbox)",
+  "description": "Chithu Foundation backend: emails website contact-form messages to the organisation",
   "main": "server.js",
   "scripts": {
-    "start": "node --no-warnings server.js",
-    "dev": "node --no-warnings --watch server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "engines": {
-    "node": ">=22.13"
+    "node": ">=18"
   },
   "license": "UNLICENSED",
   "private": true,

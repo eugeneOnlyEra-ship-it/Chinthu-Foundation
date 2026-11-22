@@ -1003,7 +1003,7 @@ details.acc[open] summary .tile{background:var(--lime);color:var(--forest-900)}
         <span class="open-pill" id="openpill"><i></i><span id="opentext">Checking office hours…</span></span>
         <dl style="margin:0">
           <div class="irow"><span class="tile"><svg class="ic"><use href="#i-civic"/></svg></span><div><dt>Organization</dt><dd>Chithu Foundation (Non-Governmental Organization)<br>Executive Director: David Mponela</dd></div></div>
-          <div class="irow"><span class="tile"><svg class="ic"><use href="#i-pin"/></svg></span><div><dt>Headquarters</dt><dd>Karonga District, Northern Region, Malawi</dd></div></div>
+          <div class="irow"><span class="tile"><svg class="ic"><use href="#i-pin"/></svg></span><div><dt>Postal address</dt><dd>P.O. Box 223, Karonga<br>Karonga District, Northern Region, Malawi</dd></div></div>
           <div class="irow"><span class="tile"><svg class="ic"><use href="#i-phone"/></svg></span><div><dt>Telephone / WhatsApp</dt><dd><a id="phoneLink" href="#"></a></dd></div></div>
           <div class="irow"><span class="tile"><svg class="ic"><use href="#i-mail"/></svg></span><div><dt>Email</dt><dd><a id="mailTxt" href="#"></a></dd></div></div>
           <div class="irow"><span class="tile"><svg class="ic"><use href="#i-clock"/></svg></span><div><dt>Operating hours</dt><dd id="hoursTxt"></dd></div></div>
@@ -1062,7 +1062,7 @@ details.acc[open] summary .tile{background:var(--lime);color:var(--forest-900)}
 (()=>{
 'use strict';
 /* Edit these once; every contact link and the contact form use them. */
-const CONFIG={email:'info@chithufoundation.org',phone:'+265993486630',phoneDisplay:'+265 (0) 993 486 630',hours:'Monday – Friday: 8:00 AM – 4:30 PM (CAT)'};
+const CONFIG={email:'info@chithufoundation.org',phone:'+265993486630',phoneDisplay:'+265 (0) 993 486 630',poBox:'P.O. Box 223, Karonga, Malawi',hours:'Monday – Friday: 8:00 AM – 4:30 PM (CAT)'};
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let pendingTab=null;
@@ -1232,7 +1232,7 @@ const form=$('#form'); let composed='';
 const API_CONTACT=(window.CHITHU_API||'').replace(/\/$/,'')+'/api/contact'; /* the Node backend; on static-only hosting this 404s and the email/WhatsApp fallback appears */
 function showSent(ok){
   $('#sentH').textContent=ok?'Message sent. Thank you!':'Your message is ready';
-  $('#sentP').textContent=ok?'Our team in Karonga will reply to the email address you gave us.':'We could not reach our server just now, so choose how to send it to our team:';
+  $('#sentP').textContent=ok?'Our team has received it and will reply to the email address you gave us.':'We could not reach our server just now, so choose how to send it to our team:';
   $('#sentOut').hidden=ok; $('#sentAlt').hidden=ok;
   $('#formwrap').hidden=true; $('#sent').hidden=false;
   const b=$('#burst'); b.textContent='';
@@ -1275,7 +1275,7 @@ const QA=[
  {id:'tea',q:'What is liquid plant tea?',re:/tea|liquid|bokashi|ferment|mulch|residue|burn/,a:'<p>Three techniques we teach beyond the heap:</p><ul><li><b>Liquid plant tea:</b> soak manure and green leaves in water for 7–14 days, then mix 1 part tea with 5 parts clean water.</li><li><b>Bokashi:</b> ferment kitchen scraps with inoculated bran and molasses in sealed buckets for about two weeks.</li><li><b>Mulching and pit composting:</b> never burn crop residues; work them into trenches and planting pits.</li></ul>'+go('See all techniques','farmers',null,'tech')},
  {id:'why',q:'Why make fertilizer from waste?',re:/why|benefit|cost|cheap|synthetic|soil health/,a:'<p>It cuts reliance on expensive synthetic fertilizers, adds humus that holds moisture and prevents erosion, keeps organic waste out of drains and dumpsites, and feeds soil microbes for healthier maize, rice, cassava and vegetables.</p>'},
  {id:'who',q:'Who runs Chithu Foundation?',re:/who|director|mponela|leader|founded|about/,a:'<p>Chithu Foundation is a non-governmental organization in Karonga District, Malawi. Our Executive Director is David Mponela.</p>'+go('About us','about')},
- {id:'contact',q:'How do I contact you?',re:/contact|phone|call|email|whatsapp|hours|open|reach|address/,a:'<p>Office hours are '+CONFIG.hours+'.</p><p>Phone / WhatsApp: '+CONFIG.phoneDisplay+'<br>Email: '+CONFIG.email+'</p>'+go('Send a message','contact')}
+ {id:'contact',q:'How do I contact you?',re:/contact|phone|call|email|whatsapp|hours|open|reach|address/,a:'<p>Office hours are '+CONFIG.hours+'.</p><p>Phone / WhatsApp: '+CONFIG.phoneDisplay+'<br>Email: '+CONFIG.email+'<br>Post: '+CONFIG.poBox+'</p>'+go('Send a message','contact')}
 ];
 const SUGG=['start','nogo','ready','school','hospital','demo'];
 const asst=$('#asst'), fab=$('#fab'), thread=$('#thread'), sugg=$('#sugg'), askin=$('#askin'); let greeted=false;

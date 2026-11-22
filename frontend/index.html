@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chithu Foundation | Cleaner institutions, healthier communities, thriving farms</title>
-<meta name="description" content="Chithu Foundation is an NGO in Karonga District, Malawi, working with schools, hospitals, markets and farmers on clean-ups and turning organic waste into fertilizer.">
+<title>Chithu Foundation | Plastic off our land, organic waste back into the soil</title>
+<meta name="description" content="Chithu Foundation is an NGO in Karonga District, Malawi, keeping plastic bags and bottles off the land, separating bottles for recycling, and turning other waste into organic manure.">
 <meta name="theme-color" content="#173d24">
 <link rel="icon" type="image/png" href="images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -459,6 +459,46 @@ p{margin:0 0 1em}
 .compose button svg{width:18px;height:18px;fill:#fff}
 @media(max-width:520px){.fab span{display:none}.fab{padding:15px}.asst{right:12px;bottom:12px;height:calc(100vh - 90px)}}
 
+/* ── waste sorting ── */
+.sorting{background:var(--wash);border-radius:6px;padding:clamp(24px,4vw,44px);margin-bottom:clamp(40px,6vw,64px);border-left:6px solid var(--maize)}
+.sort-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 32px;align-items:baseline;margin-bottom:26px}
+.sort-head h3{font-size:clamp(1.5rem,2.6vw,2rem);margin:0}
+.sort-head p{margin:0;color:var(--muted)}
+.sort-flow{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:center}
+.sort-src{background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:18px;text-align:center;position:relative}
+.sort-src b{display:block;font-family:var(--slab);font-size:1.15rem;color:var(--canopy);margin-top:8px}
+.sort-src small{display:block;color:var(--muted);font-size:.86rem;line-height:1.4;margin-top:4px}
+.sort-ic{width:46px;height:46px;border-radius:50%;display:inline-grid;place-items:center;background:var(--leaf-soft);flex:none}
+.sort-ic svg{width:24px;height:24px;fill:none;stroke:var(--leaf);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sort-lanes{display:grid;gap:14px}
+.lane{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:16px 18px}
+.lane h4{margin:0 0 4px;font-family:var(--slab);font-size:1.15rem;color:var(--canopy)}
+.lane p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.5}
+.lane-end{font-weight:700;font-size:.9rem;padding:8px 12px;border-radius:4px;white-space:nowrap}
+.lane.plastic{border-left:5px solid #2f79a8}
+.lane.plastic .sort-ic{background:#e3eff6}.lane.plastic .sort-ic svg{stroke:#2f79a8}
+.lane.plastic .lane-end{background:#e3eff6;color:#1d567a}
+.lane.organic{border-left:5px solid var(--soil)}
+.lane.organic .sort-ic{background:#f1e9df}.lane.organic .sort-ic svg{stroke:var(--soil)}
+.lane.organic .lane-end{background:#f1e9df;color:var(--soil)}
+.lane-line{position:absolute;right:100%;top:50%;width:28px;height:2px;background:repeating-linear-gradient(90deg,var(--muted) 0 5px,transparent 5px 9px)}
+@media (prefers-reduced-motion:no-preference){
+  .lane-line{background-size:9px 2px;animation:flowR .8s linear infinite}
+  .js .sorting.rv .lane{opacity:0;transform:translateX(-14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .js .sorting.rv.in .lane{opacity:1;transform:none}
+  .js .sorting.rv.in .lane.organic{transition-delay:.18s}
+  .js .sorting.rv .lane-end{transform:scale(.85);opacity:0;transition:transform .5s cubic-bezier(.34,1.56,.64,1) .5s,opacity .4s .5s}
+  .js .sorting.rv.in .lane-end{transform:none;opacity:1}
+  .js .sorting.rv.in .lane.organic .lane-end{transition-delay:.7s}
+}
+@keyframes flowR{to{background-position:9px 0}}
+@media(max-width:860px){
+  .sort-flow{grid-template-columns:1fr}
+  .lane-line{display:none}
+  .lane{grid-template-columns:auto 1fr}
+  .lane-end{grid-column:2;justify-self:start}
+}
+
 </style>
 </head>
 <body>
@@ -490,11 +530,11 @@ p{margin:0 0 1em}
   <section class="hero">
     <div class="hero-board">
       <p class="hero-place">Karonga District, Malawi</p>
-      <h1>Smarter choices for cleaner institutions, healthier communities and thriving farms.</h1>
-      <p class="hero-lead">We work with schools, hospitals, markets and smallholder farmers to build lasting environmental discipline, end pollution, and turn organic waste into rich fertilizer.</p>
+      <h1>Plastic off our land. Every other scrap back into the soil.</h1>
+      <p class="hero-lead">We work with schools, hospitals, markets and farmers in Karonga so that plastic bags and bottles are never thrown anyhow. Plastic bottles are separated for recycling, and other waste goes to a decomposition point to become rich organic manure.</p>
       <div class="btns">
         <a class="btn maize" href="#contact">Partner with us</a>
-        <a class="btn ghost-light" href="#farmers" data-scroll="guide">Read the compost guide</a>
+        <a class="btn ghost-light" href="#home" data-scroll="sorting">See how we sort waste</a>
       </div>
     </div>
     <div class="hero-photo" id="heroShow" aria-roledescription="slideshow" aria-label="Photos of our work">
@@ -517,14 +557,38 @@ p{margin:0 0 1em}
     <div class="wrap">
       <div class="intro">
         <h2>Where people learn, heal, gather and grow food</h2>
-        <p class="lead">Starting in Karonga District, we organise clean-up and waste-management partnerships with schools, hospitals, health centres and public institutions, and we train farmers to turn organic waste into manure that restores our soils.</p>
+        <p class="lead">Starting in Karonga District, we organise clean-ups and waste sorting with schools, hospitals, health centres and public institutions, and we train farmers to turn organic waste into manure that restores our soils.</p>
+      </div>
+
+      <div class="sorting" id="sorting">
+        <div class="sort-head">
+          <h3>Two streams, nothing thrown anyhow</h3>
+          <p>Every clean-up, school and market we work with separates waste at the source.</p>
+        </div>
+        <div class="sort-flow">
+          <div class="sort-src"><span class="sort-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></span><b>Waste collected</b><small>At schools, hospitals, markets, homes and clean-up days</small></div>
+          <div class="sort-lanes">
+            <div class="lane plastic">
+              <div class="lane-line" aria-hidden="true"></div>
+              <span class="sort-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2h4v3l2 3v12a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8l2-3z"/><path d="M8 12h8"/></svg></span>
+              <div><h4>Plastic bags and bottles</h4><p>Picked up and kept off the ground, out of drains and away from fields. Plastic bottles are separated from other waste and sent for recycling.</p></div>
+              <span class="lane-end">Separated and recycled</span>
+            </div>
+            <div class="lane organic">
+              <div class="lane-line" aria-hidden="true"></div>
+              <span class="sort-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></svg></span>
+              <div><h4>Food scraps, leaves and crop residue</h4><p>Taken to a decomposition point, where layered heaps break them down over four to six weeks.</p></div>
+              <span class="lane-end">Rich organic manure</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <article class="feature">
         <figure class="feature-img"><img src="images/volunteers.jpg" alt="Volunteers in safety vests collecting litter into bags in a park" width="763" height="402" loading="lazy"></figure>
         <div class="feature-text">
           <h3>Clean institutions</h3>
-          <p>Schools are our starting point. From there we work with the places where cleanliness protects public health and dignity every day.</p>
+          <p>Schools are our starting point. From there we work with the places where cleanliness protects public health and dignity every day, starting with keeping plastic bags and bottles off their grounds.</p>
           <ul class="plain-list">
             <li>Primary and secondary schools</li>
             <li>Hospitals and rural health centres</li>
@@ -539,7 +603,7 @@ p{margin:0 0 1em}
         <figure class="feature-img"><img src="images/compost.jpg" alt="A hand holding dark, crumbly compost above a planted garden bed" width="764" height="401" loading="lazy"></figure>
         <div class="feature-text">
           <h3>Farmer &amp; Soil Hub</h3>
-          <p>Fertilizer prices keep rising while crop residues, market scraps and yard trimmings go to waste. We show farmers how to make high-grade organic fertilizer on their own farms, at almost no cost.</p>
+          <p>Fertilizer prices keep rising while crop residues, market scraps and yard trimmings go to waste. Organic waste from our clean-ups goes to decomposition points, and we show farmers how to make high-grade organic manure on their own farms, at almost no cost.</p>
           <a class="text-link" href="#farmers">Visit the Farmer &amp; Soil Hub</a>
         </div>
       </article>
@@ -758,14 +822,14 @@ p{margin:0 0 1em}
           <h3>Primary and secondary schools</h3>
           <p class="why">Cleanliness builds lifelong environmental discipline early and gives children safe, inspiring places to learn.</p>
           <h4>What we do</h4>
-          <ul class="ticks"><li>Campus clean-up drives</li><li>Student environmental clubs</li><li>Waste-sorting bins</li><li>School garden compost pits</li></ul>
+          <ul class="ticks"><li>Campus clean-up drives</li><li>Collecting plastic bags and bottles, and separating bottles for recycling</li><li>Student environmental clubs</li><li>Waste-sorting bins</li><li>School garden compost pits</li></ul>
           <a class="btn leaf" href="#contact" data-type="School">Nominate a school</a>
         </div>
         <div class="tabpanel" role="tabpanel" id="i-health">
           <h3>Hospitals and rural health centres</h3>
           <p class="why">Clean grounds prevent disease transmission, remove breeding grounds for mosquitoes and other carriers, and help patients recover.</p>
           <h4>What we do</h4>
-          <ul class="ticks"><li>Community clean-up days around hospital and clinic grounds</li><li>Clearing litter, weeds and stagnant drainage</li><li>Keeping general and organic waste separate from clinical zones</li><li>Compound beautification</li></ul>
+          <ul class="ticks"><li>Community clean-up days around hospital and clinic grounds</li><li>Clearing litter, weeds and stagnant drainage</li><li>Keeping general and organic waste separate from clinical zones</li><li>Collecting plastic bottles and bags from general (non-clinical) waste for recycling</li><li>Compound beautification</li></ul>
           <div class="note">
             <h4>How we handle hospital waste safely</h4>
             <p>We work with healthcare administrators, hospital advisory committees and local volunteers. General litter and biodegradable waste are kept separate from regulated medical waste, which health authorities manage. Safe biodegradable waste, such as tree trimmings, grass clippings and non-clinical kitchen scraps, goes to community composting instead of open burning.</p>
@@ -776,14 +840,14 @@ p{margin:0 0 1em}
           <h3>Community markets and trading centres</h3>
           <p class="why">Clean markets mean fewer clogged drains, less foul smell, and less plastic and organic litter where families buy their daily food.</p>
           <h4>What we do</h4>
-          <ul class="ticks"><li>Market sanitation drives</li><li>Collection points for vegetable waste, which local farmers compost</li><li>Awareness campaigns for vendors</li></ul>
+          <ul class="ticks"><li>Market sanitation drives</li><li>Plastic bag and bottle collection points, with bottles separated for recycling</li><li>Collection points for vegetable waste, which local farmers compost</li><li>Awareness campaigns for vendors</li></ul>
           <a class="btn leaf" href="#contact" data-type="Market">Nominate a market</a>
         </div>
         <div class="tabpanel" role="tabpanel" id="i-civic">
           <h3>Civic and religious institutions</h3>
           <p class="why">These institutions set visible standards of public responsibility and bring adult citizens across Karonga together.</p>
           <h4>What we do</h4>
-          <ul class="ticks"><li>Joint clean-up days</li><li>Public dialogues on environmental discipline</li><li>Tree-planting initiatives</li></ul>
+          <ul class="ticks"><li>Joint clean-up days, with plastics collected separately</li><li>Public dialogues on environmental discipline</li><li>Tree-planting initiatives</li></ul>
           <a class="btn leaf" href="#contact" data-type="Civic or Religious Group">Partner with us</a>
         </div>
       </div>
@@ -911,7 +975,7 @@ p{margin:0 0 1em}
         <dl class="ways">
           <div><dt>Demonstration plots</dt><dd>Hands-on field days in Karonga villages comparing crops grown with compost against untreated plots.</dd></div>
           <div><dt>Farmer learning clubs</dt><dd>Grower groups collect market and household waste together, share the work of turning heaps, and produce fertilizer at community scale.</dd></div>
-          <div><dt>Links with institutions</dt><dd>Sorted, safe biodegradable waste from school, market and public clean-ups goes straight to local farming clubs.</dd></div>
+          <div><dt>Decomposition points</dt><dd>Sorted, safe biodegradable waste from school, market and public clean-ups goes to decomposition points, where it becomes manure for local farming clubs. Plastics are taken out first.</dd></div>
         </dl>
         <a class="btn maize" href="#contact" data-type="Farming Club">Request a demonstration in your village</a>
       </div>
@@ -989,6 +1053,8 @@ p{margin:0 0 1em}
     <div class="wrap narrow">
       <h2 id="faqh">Common questions</h2>
       <div class="acc">
+        <details name="faq"><summary>What happens to plastic bags and bottles?</summary><p>They should never be thrown anyhow. At our clean-ups and collection points, plastic bags and bottles are picked up and kept out of drains, fields and public spaces. Plastic bottles are separated from other waste and sent for recycling.</p></details>
+        <details name="faq"><summary>What is a decomposition point?</summary><p>A place where organic waste (food scraps, leaves, grass and crop residue) is built into layered heaps and left to break down. In four to six weeks it becomes rich organic manure for farms and school gardens.</p></details>
         <details name="faq"><summary>How can my school work with you?</summary><p>Schools are our starting point. We run campus clean-up drives, student environmental clubs, waste-sorting bins and school garden compost pits. Use the form above and choose "School".</p></details>
         <details name="faq"><summary>Do you work with hospitals and clinics?</summary><p>Yes. We work with healthcare administrators, hospital advisory committees and local volunteers on clean-up days, drainage clearing and compound beautification. General and biodegradable waste is always kept separate from medical waste, which health authorities manage.</p></details>
         <details name="faq"><summary>Can you hold a composting demonstration in my village?</summary><p>Yes. We hold hands-on field days in Karonga villages and set up demonstration plots that compare crops grown with compost against untreated plots. Send us a message and choose "Farming club".</p></details>
@@ -1006,7 +1072,7 @@ p{margin:0 0 1em}
   <div class="wrap foot-grid">
     <div class="foot-brand">
       <img src="images/logo-mark.png" alt="" width="56" height="56">
-      <p><strong>Chithu Foundation</strong>Cleaner institutions, healthier communities and thriving farms in Karonga District, Malawi.</p>
+      <p><strong>Chithu Foundation</strong>Plastic off our land, organic waste back into the soil. Karonga District, Malawi.</p>
     </div>
     <div>
       <h2>Contact</h2>
@@ -1039,7 +1105,7 @@ p{margin:0 0 1em}
   </div>
   <div class="thread" id="thread" aria-live="polite"></div>
   <div class="sugg" id="sugg" aria-label="Suggested questions"></div>
-  <form class="compose" id="ask"><input id="askin" aria-label="Type your question" placeholder="Ask about composting, schools, volunteering…" autocomplete="off"><button aria-label="Send question"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form>
+  <form class="compose" id="ask"><input id="askin" aria-label="Type your question" placeholder="Ask about plastics, composting, volunteering…" autocomplete="off"><button aria-label="Send question"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form>
 </section>
 
 <script src="config.js"></script>
@@ -1174,7 +1240,7 @@ $('#copyBtn').addEventListener('click',async()=>{
 $('#again').addEventListener('click',()=>{form.reset(); $('#sent').hidden=true; $('#formwrap').hidden=false; $('#fname').focus();});
 
 /* ── scroll reveal ── */
-const RV=['.intro','.feature-img','.split-head','.benefits > p','.quote','.step-strip > li','.cta-row > *','.phead .crumb','.phead h1','.phead .lead','.phead .photo','.prose','.two-col > .photo','.team-row > div:first-child','.team figure','.org-tier','.org-depts > *','.values > div','.vm > div','.ways > div','.acc','.details','.form-card','.guide','.tabs','.banner','.feature-text > *'];
+const RV=['.intro','.sorting','.feature-img','.split-head','.benefits > p','.quote','.step-strip > li','.cta-row > *','.phead .crumb','.phead h1','.phead .lead','.phead .photo','.prose','.two-col > .photo','.team-row > div:first-child','.team figure','.org-tier','.org-depts > *','.values > div','.vm > div','.ways > div','.acc','.details','.form-card','.guide','.tabs','.banner','.feature-text > *'];
 const io=reduce||!('IntersectionObserver' in window)?null:new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in'); io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px',threshold:.1});
 if(io){
   $$(RV.join(',')).forEach(el=>{
@@ -1220,6 +1286,8 @@ if(show_){
 const go=(label,page,type,scroll)=>'<button class="go" type="button" data-go="'+page+'"'+(type?' data-t="'+type+'"':'')+(scroll?' data-sc="'+scroll+'"':'')+'>'+label+'</button>';
 const QA=[
  {id:'start',q:'How do I start a compost heap?',re:/start|begin|how|make|build|compost|heap|manure|fertili/,a:'<p>Follow our six steps:</p><ul><li>Sort browns (2 parts) and greens (1 part), plus a little manure, ash or topsoil</li><li>Chop stalks to 5–10 cm and pick a shaded, well-drained spot</li><li>Build it in layers, up to 1–1.5 m high</li><li>Water each layer and cover the heap</li><li>Turn it every 7–10 days</li><li>Harvest when it is dark, crumbly and smells like forest soil</li></ul>'+go('Open the compost guide','farmers',null,'guide')},
+ {id:'plastic',q:'What happens to plastic bottles?',re:/plastic|bottle|\bbags?\b|recycl|litter|throw/,a:'<p>Plastic bags and bottles should never be thrown anyhow. At our clean-ups and collection points they are picked up and kept out of drains, fields and public spaces.</p><p>Plastic bottles are separated from other waste and sent for recycling. Plastics never go into compost.</p>'+go('See how we sort waste','home',null,'sorting')},
+ {id:'point',q:'What is a decomposition point?',re:/decompos|rot|organic waste|food waste|scraps/,a:'<p>A place where organic waste (food scraps, leaves, grass and crop residue) is built into layered heaps and left to break down. In four to six weeks it becomes rich organic manure.</p>'+go('Read the compost guide','farmers',null,'guide')},
  {id:'nogo',q:"What can't go in compost?",re:/\bnot\b|avoid|exclude|plastic|glass|metal|treated|shouldn|never put|bad for/,a:'<p>Keep plastics, glass, metals, medical waste and treated wood out of your compost.</p>'},
  {id:'ready',q:"How long until it's ready?",re:/long|ready|weeks|days|how fast|finished|harvest/,a:'<p>The centre of the pile heats up within 3 to 5 days. Turn it every 7 to 10 days and the manure is ready in 4 to 6 weeks.</p><p>It is ready when it is dark brown to black, crumbles easily and smells like fresh forest soil.</p>'},
  {id:'school',q:'How can my school partner?',re:/school|student|pupil/,a:'<p>Schools are our starting point. We run campus clean-up drives, student environmental clubs, waste-sorting bins and school garden compost pits.</p>'+go('Nominate a school','contact','School')},
@@ -1231,8 +1299,8 @@ const QA=[
  {id:'who',q:'Who runs Chithu Foundation?',re:/who|director|mponela|leader|founded|about/,a:'<p>Chithu Foundation is a non-governmental organisation in Karonga District, Malawi. Our Executive Director is David Mponela, and Pius Nyondo is our Information Manager.</p>'+go('About us','about')},
  {id:'contact',q:'How do I contact you?',re:/contact|phone|call|email|whatsapp|hours|open|reach|address|box/,a:'<p>Office hours: '+CONFIG.hours+'.</p><p>Phone / WhatsApp: '+CONFIG.phoneDisplay+'<br>Email: '+CONFIG.email+'<br>Post: P.O. Box 223, Karonga, Malawi</p>'+go('Send a message','contact')}
 ];
-const SUGG=['start','school','volunteer','demo','ready','contact'];
-const MATCH=['contact','volunteer','who','tea','demo','hospital','school','nogo','ready','why','start'];
+const SUGG=['plastic','point','start','school','volunteer','contact'];
+const MATCH=['contact','volunteer','who','plastic','point','tea','demo','hospital','school','nogo','ready','why','start'];
 const asst=$('#asst'), fab=$('#fab'), thread=$('#thread'), sugg=$('#sugg'), askin=$('#askin'); let greeted=false;
 function bubble(cls,html){const d=document.createElement('div'); d.className='bub '+cls; if(html!=null)d.innerHTML=html; thread.appendChild(d); thread.scrollTop=thread.scrollHeight; return d;}
 function answer(qa,text){
@@ -1245,7 +1313,7 @@ $('#ask').addEventListener('submit',e=>{e.preventDefault(); const t=askin.value.
 function openAsst(o){
   fab.classList.remove('nudge');
   asst.hidden=!o; asst.classList.toggle('open',o); fab.setAttribute('aria-expanded',String(o));
-  if(o){if(!greeted){greeted=true; bubble('bot','<p>Hello! I can answer common questions about composting, clean-ups and getting involved. Pick a question below or type your own.</p>');} setTimeout(()=>askin.focus({preventScroll:true}),60);}
+  if(o){if(!greeted){greeted=true; bubble('bot','<p>Hello! I can answer common questions about plastics, composting, clean-ups and getting involved. Pick a question below or type your own.</p>');} setTimeout(()=>askin.focus({preventScroll:true}),60);}
   else fab.focus({preventScroll:true});
 }
 fab.addEventListener('click',()=>openAsst(asst.hidden));

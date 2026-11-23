@@ -1,8 +1,9 @@
 'use strict';
 /* Chithu Foundation: backend
-   - POST /api/contact   receives the website contact form and emails it to the organisation
-   - serves the static site from ../frontend (optional convenience)
-   Nothing is stored: the email is the record. */
+   - serves the website from ../frontend, with proper link previews for sharing
+   - POST /api/contact     emails contact-form messages to the organisation (nothing stored)
+   - /api/posts            published activities (public)
+   - /admin                password-protected editor for posting activities with photos */
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -76,15 +77,18 @@ app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      'script-src': ["'self'", "'unsafe-inline'"],
-      'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      'script-src': ["'self'", "'unsafe-inline'", 'https://accounts.google.com/gsi/client'],
+      'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com/gsi/style'],
+      'frame-src': ['https://accounts.google.com/gsi/'],
       'font-src': ["'self'", 'https://fonts.gstatic.com'],
-      'img-src': ["'self'", 'data:'],
-      'connect-src': ["'self'"],
+      'img-src': ["'self'", 'data:', 'blob:'],
+      'connect-src': ["'self'", 'https://accounts.google.com/gsi/'],
       'form-action': ["'self'"],
       'upgrade-insecure-requests': (process.env.HTTPS === 'true' || ON_RAILWAY) ? [] : null
     }
-  }
+  },
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' }, // needed by the Google sign-in pop-up
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 app.use(express.json({ limit: '20kb' }));
 
@@ -132,10 +136,94 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
   }
 });
 
-app.get('/healthz', (req, res) => res.json({ ok: true, emailConfigured: !!sendMail, provider: sendMail ? PROVIDER : null }));
+// ---- staff accounts + activities ----
+const store = require('./store');
+console.log('[store] activities and photos are saved in', store.DATA_DIR);
+if (ON_RAILWAY && !process.env.RAILWAY_VOLUME_MOUNT_PATH && !process.env.DATA_DIR) console.warn('[warn] No Railway Volume attached: posted activities, photos and staff accounts will be LOST on the next deploy. Attach a volume (see DEPLOY-RAILWAY.md).');
+store.cleanOrphans(); setInterval(() => store.cleanOrphans(), 6 * 3600e3).unref();
+const auth = require('./auth')(app, { DATA_DIR: store.DATA_DIR, ON_RAILWAY, rateLimit });
+const { requireStaff } = auth;
+
+app.get('/api/admin/session', (req, res) => res.json({ ok: !!auth.currentUser(req), enabled: auth.enabled(), categories: store.CATEGORIES }));
+app.get('/api/admin/posts', requireStaff, (req, res) => res.json({ ok: true, posts: store.listAll() }));
+app.get('/api/admin/posts/:id', requireStaff, (req, res) => { const p = store.getById(req.params.id); p ? res.json({ ok: true, post: p }) : res.status(404).json({ ok: false, error: 'Activity not found.' }); });
+app.post('/api/admin/posts', requireStaff, (req, res) => { const r = store.create({ ...(req.body || {}), author: req.user.name }); r.errors ? res.status(400).json({ ok: false, errors: r.errors }) : res.json({ ok: true, post: r.post }); });
+app.put('/api/admin/posts/:id', requireStaff, (req, res) => {
+  const r = store.update(req.params.id, req.body || {});
+  if (r.notFound) return res.status(404).json({ ok: false, error: 'Activity not found.' });
+  r.errors ? res.status(400).json({ ok: false, errors: r.errors }) : res.json({ ok: true, post: r.post });
+});
+app.delete('/api/admin/posts/:id', requireStaff, (req, res) => store.remove(req.params.id) ? res.json({ ok: true }) : res.status(404).json({ ok: false, error: 'Activity not found.' }));
+app.post('/api/admin/uploads', requireStaff, express.raw({ type: ['image/jpeg', 'image/png', 'image/webp'], limit: '6mb' }), (req, res) => {
+  if (!Buffer.isBuffer(req.body) || !req.body.length) return res.status(400).json({ ok: false, error: 'Choose a JPG, PNG or WebP photo.' });
+  const url = store.saveUpload(req.body);
+  url ? res.json({ ok: true, url }) : res.status(400).json({ ok: false, error: 'That file is not a JPG, PNG or WebP photo.' });
+});
+
+app.get('/api/posts', (req, res) => res.json({ ok: true, posts: store.listPublished(Math.min(100, Number(req.query.limit) || 100)) }));
+app.get('/api/posts/:slug', (req, res) => {
+  const p = store.getBySlug(req.params.slug);
+  const staff = !!auth.currentUser(req);
+  if (!p || (!p.published && !staff)) return res.status(404).json({ ok: false, error: 'Activity not found.' });
+  const { id, ...pub } = p; res.json({ ok: true, post: staff ? p : pub, staff });
+});
+
+app.get('/healthz', (req, res) => res.json({ ok: true, emailConfigured: !!sendMail, provider: sendMail ? PROVIDER : null, postingEnabled: auth.enabled(), googleSignIn: !!auth.GOOGLE_CLIENT_ID, storage: store.DATA_DIR }));
 app.use('/api', (req, res) => res.status(404).json({ ok: false, error: 'Not found.' }));
-app.use(express.static(FRONTEND_DIR, { extensions: ['html'], maxAge: '1h' }));
-app.use((req, res) => res.status(404).sendFile(path.join(FRONTEND_DIR, 'index.html')));
-app.use((err, req, res, next) => { console.error(err); res.status(err.status || 500).json({ ok: false, error: 'Something went wrong.' }); });
+
+// ---- pages, with link previews (Open Graph) so shared links show a title, text and photo ----
+app.use('/uploads', express.static(store.UPLOAD_DIR, { maxAge: '30d', immutable: true, index: false }));
+app.get('/admin', (req, res) => { res.setHeader('X-Robots-Tag', 'noindex'); res.sendFile(path.join(__dirname, 'admin', 'index.html')); });
+
+const SITE = 'Chithu Foundation';
+const PAGES = {
+  '/': ['Chithu Foundation | Plastic off our land, organic waste back into the soil', 'An NGO in Karonga District, Malawi, keeping plastic bags and bottles off the land, separating bottles for recycling, and turning other waste into organic manure.', '/images/kids.jpg'],
+  '/about': ['About us | Chithu Foundation', 'Who we are, our team and how Chithu Foundation is governed.', '/images/kids.jpg'],
+  '/vision': ['Vision and mission | Chithu Foundation', 'A clean, resilient Malawi, built through disciplined stewardship and healthy soils.', '/images/volunteers.jpg'],
+  '/institutions': ['Institutional clean-ups | Chithu Foundation', 'Clean-ups and plastic collection with schools, hospitals, markets and civic institutions in Karonga.', '/images/kids.jpg'],
+  '/farmers': ['Farmer and Soil Hub | Chithu Foundation', 'How to turn organic waste into rich manure: our six-step compost guide and farmer programmes.', '/images/compost.jpg'],
+  '/activities': ['Activities | Chithu Foundation', 'Clean-ups, plastic collection and composting activities by Chithu Foundation in Karonga District.', '/images/volunteers.jpg'],
+  '/login': ['Staff sign in | Chithu Foundation', 'Sign in to post activities on the Chithu Foundation website.', '/images/kids.jpg'],
+  '/contact': ['Contact us | Chithu Foundation', 'Partner with Chithu Foundation, nominate an institution for a clean-up, or volunteer.', '/images/kids.jpg']
+};
+const escA = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+let shell = null, shellMtime = 0;
+function getShell() {
+  const f = path.join(FRONTEND_DIR, 'index.html'), m = fs.statSync(f).mtimeMs;
+  if (!shell || m !== shellMtime) { shell = fs.readFileSync(f, 'utf8'); shellMtime = m; }
+  return shell;
+}
+const origin = req => (process.env.SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+function render(req, res, meta, status = 200) {
+  const o = origin(req), url = o + (req.path === '/' ? '/' : req.path.replace(/\/$/, ''));
+  const img = /^https?:/.test(meta.image) ? meta.image : o + meta.image;
+  const tags = [
+    `<link rel="canonical" href="${escA(url)}">`,
+    `<meta property="og:site_name" content="${SITE}">`, `<meta property="og:type" content="${meta.type || 'website'}">`,
+    `<meta property="og:title" content="${escA(meta.title)}">`, `<meta property="og:description" content="${escA(meta.desc)}">`,
+    `<meta property="og:url" content="${escA(url)}">`, `<meta property="og:image" content="${escA(img)}">`,
+    `<meta name="twitter:card" content="summary_large_image">`
+  ].join('\n');
+  const html = getShell()
+    .replace(/<title>[^<]*<\/title>/, `<title>${escA(meta.title)}</title>`)
+    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${escA(meta.desc)}">`)
+    .replace('</head>', tags + '\n</head>');
+  res.status(status).type('html').setHeader('Cache-Control', 'no-cache'); res.send(html);
+}
+app.get(Object.keys(PAGES), (req, res) => { const [title, desc, image] = PAGES[req.path]; render(req, res, { title, desc, image }); });
+app.get('/activities/:slug', (req, res) => {
+  const p = store.getBySlug(req.params.slug);
+  if (!p || !p.published) return render(req, res, { title: 'Activity not found | ' + SITE, desc: PAGES['/activities'][1], image: PAGES['/activities'][2] }, 404);
+  const text = p.body.replace(/\s+/g, ' ');
+  render(req, res, { type: 'article', title: `${p.title} | ${SITE}`, desc: text.length > 200 ? text.slice(0, 197) + '…' : text, image: p.images[0] ? p.images[0].url : '/images/volunteers.jpg' });
+});
+app.get('/sitemap.xml', (req, res) => {
+  const o = origin(req), urls = Object.keys(PAGES).filter(p => p !== '/login').map(p => o + p).concat(store.listPublished().map(p => `${o}/activities/${p.slug}`));
+  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${escA(u)}</loc></url>`).join('\n')}\n</urlset>\n`);
+});
+app.get('/robots.txt', (req, res) => res.type('text/plain').send(`User-agent: *\nDisallow: /admin\nDisallow: /login\nDisallow: /api/\nSitemap: ${origin(req)}/sitemap.xml\n`));
+app.use(express.static(FRONTEND_DIR, { index: false, maxAge: '1h' }));
+app.use((req, res) => render(req, res, { title: 'Page not found | ' + SITE, desc: PAGES['/'][1], image: PAGES['/'][2] }, 404));
+app.use((err, req, res, next) => { console.error(err); res.status(err.status || 500).json({ ok: false, error: err.type === 'entity.too.large' ? 'That photo is too large.' : 'Something went wrong.' }); });
 
 app.listen(PORT, '0.0.0.0', () => console.log(`Chithu Foundation running on http://localhost:${PORT}`));

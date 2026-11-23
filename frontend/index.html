@@ -74,7 +74,7 @@ p{margin:0 0 1em}
 #nav .nav-cta{background:var(--leaf);color:#fff;margin-left:10px;padding:11px 18px;font-weight:600}
 #nav .nav-cta:hover,#nav .nav-cta[aria-current="page"]{background:var(--canopy);color:#fff}
 .menu-btn{display:none;font:600 1rem var(--sans);background:none;border:2px solid var(--leaf);color:var(--leaf);border-radius:4px;padding:8px 14px;cursor:pointer}
-@media(max-width:1020px){
+@media(max-width:1140px){
   .menu-btn{display:block}
   #nav{position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;padding:8px var(--gut) 18px;gap:0;display:none;box-shadow:0 18px 30px -20px rgba(23,61,36,.35)}
   #nav.open{display:flex}
@@ -499,26 +499,117 @@ p{margin:0 0 1em}
   .lane-end{grid-column:2;justify-self:start}
 }
 
+/* ── share buttons ── */
+.share{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.share:empty{display:none}
+.sh{display:inline-flex;align-items:center;gap:7px;font:600 .88rem var(--sans);color:var(--canopy);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:7px 13px 7px 10px;text-decoration:none;cursor:pointer;transition:border-color .2s,background-color .2s,transform .2s var(--ease)}
+.sh:hover{border-color:var(--leaf);background:var(--leaf-soft);color:var(--canopy);transform:translateY(-1px)}
+.sh svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sh.native{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.sh.native:hover{background:var(--canopy);color:#fff}
+.share.light .sh{background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
+.share.light .sh:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.share-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+.share-row > span{font-weight:600;color:#fff}
+.share-row .share{margin:0}
+
+/* ── activity cards ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+@media(max-width:980px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.cards{grid-template-columns:1fr}}
+.card a{display:flex;flex-direction:column;height:100%;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s var(--ease)}
+.card a:hover{border-color:var(--leaf);box-shadow:0 18px 34px -24px rgba(23,61,36,.55);transform:translateY(-3px);color:var(--ink)}
+.card-img{aspect-ratio:3/2;overflow:hidden;background:var(--leaf-soft)}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.card a:hover .card-img img{transform:scale(1.05)}
+.noimg{display:block;width:100%;height:100%;background:linear-gradient(135deg,var(--leaf-soft),#d4e2cf)}
+.card-body{padding:18px 20px 22px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card-tag{display:inline-block;align-self:flex-start;font-size:.8rem;font-weight:700;color:var(--leaf);background:var(--leaf-soft);padding:3px 10px;border-radius:3px;margin:0}
+.card h3{font-size:1.3rem;margin:4px 0 0;color:var(--canopy)}
+.card-meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;color:var(--muted);margin:0}
+.card-meta span::before,.post-meta span::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--maize);margin-right:8px;vertical-align:middle}
+.card-ex{color:var(--muted);font-size:.95rem;margin:4px 0 0;line-height:1.55}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.filters button{font:600 .92rem var(--sans);padding:8px 15px;border:1.5px solid var(--line);border-radius:4px;background:#fff;color:var(--canopy);cursor:pointer}
+.filters button:hover{border-color:var(--leaf)}
+.filters button[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.empty{max-width:560px;padding:36px;border:1.5px dashed var(--line);border-radius:6px;background:var(--wash)}
+.empty h2{font-size:1.5rem}
+.loading{color:var(--muted)}
+
+/* ── one activity ── */
+.post-head h1{max-width:none}
+.post-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;color:var(--muted);margin:0}
+.post-main{padding-top:clamp(28px,4vw,44px);padding-bottom:clamp(56px,7vw,88px)}
+.post-cover{margin:0 0 32px}
+.post-cover img{width:100%;height:auto;border-radius:4px;max-height:620px;object-fit:cover}
+.post-cover figcaption{font-size:.9rem;color:var(--muted);margin-top:8px}
+.zoom{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.post-body p{font-size:1.1rem;line-height:1.75;max-width:68ch}
+.gallery{margin-top:36px}
+.gallery h2{font-size:1.5rem}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gal-grid .zoom{aspect-ratio:1;overflow:hidden;border-radius:4px;background:var(--leaf-soft)}
+.gal-grid img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.gal-grid .zoom:hover img{transform:scale(1.06)}
+.post-foot{margin-top:44px;padding:22px 24px;background:var(--wash);border-left:5px solid var(--maize);border-radius:4px}
+.post-foot p{margin:0;font-weight:600}
+.post-foot .share{margin-top:12px}
+
+/* ── photo viewer ── */
+.lightbox{border:0;padding:0;background:transparent;max-width:100vw;max-height:100vh;width:100vw;height:100vh;margin:0}
+.lightbox::backdrop{background:rgba(8,20,12,.92)}
+.lightbox[open]{display:grid;place-items:center}
+.lightbox figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:92vw}
+.lightbox img{max-width:92vw;max-height:80vh;object-fit:contain;border-radius:3px;animation:pop .25s var(--ease)}
+.lightbox figcaption{color:#dbe7d8;font-size:.95rem;text-align:center}
+.lb-btn{position:fixed;width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.14);cursor:pointer;display:grid;place-items:center}
+.lb-btn:hover{background:rgba(255,255,255,.28)}
+.lb-btn svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.lb-close{top:16px;right:16px}
+.lb-prev{left:16px;top:50%;transform:translateY(-50%)}
+.lb-next{right:16px;top:50%;transform:translateY(-50%)}
+
+/* ── staff bar + sign in ── */
+.staffbar{background:var(--soil);color:#f1e9df;font-size:.9rem}
+.staffbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:4px 18px;min-height:38px;padding-top:4px;padding-bottom:4px}
+.staffbar span{margin-right:auto;font-weight:600}
+.staffbar a,.staffbar button{color:#fff;font:600 .9rem var(--sans);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+.staffbar a:hover,.staffbar button:hover{text-decoration-color:var(--maize)}
+.staff-link{color:#9fb39d!important;font-size:.88rem}
+.foot-base{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+.login-sec{min-height:60vh}
+.login-wrap{display:grid;grid-template-columns:1fr minmax(0,440px);gap:clamp(28px,6vw,80px);align-items:center}
+@media(max-width:860px){.login-wrap{grid-template-columns:1fr}}
+.login-card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:clamp(22px,3.5vw,36px);border-top:6px solid var(--leaf)}
+.login-card h2{font-size:1.5rem}
+.muted{color:var(--muted)}
+.g-btn{min-height:44px;display:flex;justify-content:center}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.88rem;margin:20px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
 <div class="progress" id="progress" aria-hidden="true"></div>
+<div class="staffbar" id="staffbar" hidden><div class="wrap"><span id="sbWho"></span><a href="/admin">Dashboard</a><a href="/admin?new=1">Post an activity</a><a href="#" id="sbEdit" hidden>Edit this activity</a><button type="button" data-signout>Sign out</button></div></div>
 <header class="site-head" id="sitehead">
   <div class="wrap head-row">
-    <a class="brand" href="#home" aria-label="Chithu Foundation, home">
+    <a class="brand" href="/" aria-label="Chithu Foundation, home">
       <img src="images/logo-mark.png" alt="" width="48" height="48">
       <span class="brand-name">Chithu Foundation<small>Karonga, Malawi</small></span>
     </a>
     <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav id="nav" aria-label="Main">
-      <a href="#home" data-nav="home">Home</a>
-      <a href="#about" data-nav="about">About us</a>
-      <a href="#vision" data-nav="vision">Vision &amp; mission</a>
-      <a href="#institutions" data-nav="institutions">Clean-ups</a>
-      <a href="#farmers" data-nav="farmers">Farmer &amp; Soil Hub</a>
-      <a href="#contact" data-nav="contact" class="nav-cta">Contact us</a>
+      <a href="/" data-nav="home">Home</a>
+      <a href="/about" data-nav="about">About us</a>
+      <a href="/vision" data-nav="vision">Vision &amp; mission</a>
+      <a href="/institutions" data-nav="institutions">Clean-ups</a>
+      <a href="/farmers" data-nav="farmers">Farmer &amp; Soil Hub</a>
+      <a href="/activities" data-nav="activities">Activities</a>
+      <a href="/contact" data-nav="contact" class="nav-cta">Contact us</a>
     </nav>
   </div>
 </header>
@@ -533,8 +624,8 @@ p{margin:0 0 1em}
       <h1>Plastic off our land. Every other scrap back into the soil.</h1>
       <p class="hero-lead">We work with schools, hospitals, markets and farmers in Karonga so that plastic bags and bottles are never thrown anyhow. Plastic bottles are separated for recycling, and other waste goes to a decomposition point to become rich organic manure.</p>
       <div class="btns">
-        <a class="btn maize" href="#contact">Partner with us</a>
-        <a class="btn ghost-light" href="#home" data-scroll="sorting">See how we sort waste</a>
+        <a class="btn maize" href="/contact">Partner with us</a>
+        <a class="btn ghost-light" href="/" data-scroll="sorting">See how we sort waste</a>
       </div>
     </div>
     <div class="hero-photo" id="heroShow" aria-roledescription="slideshow" aria-label="Photos of our work">
@@ -595,7 +686,7 @@ p{margin:0 0 1em}
             <li>Community markets and trading centres</li>
             <li>Civic and religious institutions</li>
           </ul>
-          <a class="text-link" href="#institutions">See our clean-up work</a>
+          <a class="text-link" href="/institutions">See our clean-up work</a>
         </div>
       </article>
 
@@ -604,7 +695,7 @@ p{margin:0 0 1em}
         <div class="feature-text">
           <h3>Farmer &amp; Soil Hub</h3>
           <p>Fertilizer prices keep rising while crop residues, market scraps and yard trimmings go to waste. Organic waste from our clean-ups goes to decomposition points, and we show farmers how to make high-grade organic manure on their own farms, at almost no cost.</p>
-          <a class="text-link" href="#farmers">Visit the Farmer &amp; Soil Hub</a>
+          <a class="text-link" href="/farmers">Visit the Farmer &amp; Soil Hub</a>
         </div>
       </article>
     </div>
@@ -644,7 +735,17 @@ p{margin:0 0 1em}
         <li>Turn and aerate</li>
         <li>Harvest and apply</li>
       </ol>
-      <a class="btn leaf" href="#farmers" data-scroll="guide">Open the full guide</a>
+      <a class="btn leaf" href="/farmers" data-scroll="guide">Open the full guide</a>
+    </div>
+  </section>
+
+  <section class="sec" id="latest" hidden>
+    <div class="wrap">
+      <div class="split-head">
+        <h2>Latest activities</h2>
+        <p>Clean-ups, plastic collection and composting days from across Karonga. <a class="text-link" href="/activities">See all activities</a></p>
+      </div>
+      <div class="cards" id="latestCards"></div>
     </div>
   </section>
 
@@ -655,10 +756,11 @@ p{margin:0 0 1em}
         <p>Nominate a school, hospital or market for a clean-up, ask for a composting demonstration in your village, or volunteer with our team.</p>
       </div>
       <div class="btns">
-        <a class="btn maize" href="#contact">Get in touch</a>
-        <a class="btn ghost-light" href="#contact" data-type="Individual Volunteer">Volunteer with us</a>
+        <a class="btn maize" href="/contact">Get in touch</a>
+        <a class="btn ghost-light" href="/contact" data-type="Individual Volunteer">Volunteer with us</a>
       </div>
     </div>
+    <div class="wrap share-row"><span>Share this website</span><div class="share light" data-share></div></div>
   </section>
 </div>
 
@@ -669,6 +771,7 @@ p{margin:0 0 1em}
       <p class="crumb">About us</p>
       <h1>Practical action in every corner of community life</h1>
       <p class="lead">A non-governmental organisation based in Karonga District, Malawi, working for environmental smartness, public cleanliness and sustainable land stewardship.</p>
+      <div class="share" data-share></div>
     </div>
   </header>
 
@@ -690,7 +793,7 @@ p{margin:0 0 1em}
       <div>
         <h2>Our team</h2>
         <p class="lead">Local people, rooted in Karonga District, working with schools, hospitals, markets and farmers to make clean, disciplined environments the everyday norm.</p>
-        <a class="text-link" href="#contact" data-type="Individual Volunteer">Volunteer with us</a>
+        <a class="text-link" href="/contact" data-type="Individual Volunteer">Volunteer with us</a>
       </div>
       <div class="team">
         <figure><img src="images/p1.jpg" alt="David Mponela, Executive Director of Chithu Foundation" width="900" height="1200" loading="lazy" style="object-position:50% 14%"><figcaption><strong>David Mponela</strong>Executive Director</figcaption></figure>
@@ -760,6 +863,7 @@ p{margin:0 0 1em}
       <p class="crumb">Vision &amp; mission</p>
       <h1>What we are working towards</h1>
       <p class="lead">A clean, resilient Malawi, built through disciplined stewardship and healthy soils.</p>
+      <div class="share" data-share></div>
     </div>
   </header>
 
@@ -803,6 +907,7 @@ p{margin:0 0 1em}
         <p class="crumb">Clean institutions</p>
         <h1>Beyond the classroom: district-wide institutional hygiene</h1>
         <p class="lead">Schools are our starting point. Our work extends to hospitals, health centres, markets and civic offices, the busy places where cleanliness protects public health and community dignity.</p>
+      <div class="share" data-share></div>
       </div>
       <figure class="photo"><img src="images/kids.jpg" alt="Pupils collecting litter during a school clean-up" width="640" height="480" loading="lazy"></figure>
     </div>
@@ -823,7 +928,7 @@ p{margin:0 0 1em}
           <p class="why">Cleanliness builds lifelong environmental discipline early and gives children safe, inspiring places to learn.</p>
           <h4>What we do</h4>
           <ul class="ticks"><li>Campus clean-up drives</li><li>Collecting plastic bags and bottles, and separating bottles for recycling</li><li>Student environmental clubs</li><li>Waste-sorting bins</li><li>School garden compost pits</li></ul>
-          <a class="btn leaf" href="#contact" data-type="School">Nominate a school</a>
+          <a class="btn leaf" href="/contact" data-type="School">Nominate a school</a>
         </div>
         <div class="tabpanel" role="tabpanel" id="i-health">
           <h3>Hospitals and rural health centres</h3>
@@ -834,21 +939,21 @@ p{margin:0 0 1em}
             <h4>How we handle hospital waste safely</h4>
             <p>We work with healthcare administrators, hospital advisory committees and local volunteers. General litter and biodegradable waste are kept separate from regulated medical waste, which health authorities manage. Safe biodegradable waste, such as tree trimmings, grass clippings and non-clinical kitchen scraps, goes to community composting instead of open burning.</p>
           </div>
-          <a class="btn leaf" href="#contact" data-type="Hospital or Health Center">Nominate a health facility</a>
+          <a class="btn leaf" href="/contact" data-type="Hospital or Health Center">Nominate a health facility</a>
         </div>
         <div class="tabpanel" role="tabpanel" id="i-market">
           <h3>Community markets and trading centres</h3>
           <p class="why">Clean markets mean fewer clogged drains, less foul smell, and less plastic and organic litter where families buy their daily food.</p>
           <h4>What we do</h4>
           <ul class="ticks"><li>Market sanitation drives</li><li>Plastic bag and bottle collection points, with bottles separated for recycling</li><li>Collection points for vegetable waste, which local farmers compost</li><li>Awareness campaigns for vendors</li></ul>
-          <a class="btn leaf" href="#contact" data-type="Market">Nominate a market</a>
+          <a class="btn leaf" href="/contact" data-type="Market">Nominate a market</a>
         </div>
         <div class="tabpanel" role="tabpanel" id="i-civic">
           <h3>Civic and religious institutions</h3>
           <p class="why">These institutions set visible standards of public responsibility and bring adult citizens across Karonga together.</p>
           <h4>What we do</h4>
           <ul class="ticks"><li>Joint clean-up days, with plastics collected separately</li><li>Public dialogues on environmental discipline</li><li>Tree-planting initiatives</li></ul>
-          <a class="btn leaf" href="#contact" data-type="Civic or Religious Group">Partner with us</a>
+          <a class="btn leaf" href="/contact" data-type="Civic or Religious Group">Partner with us</a>
         </div>
       </div>
     </div>
@@ -863,6 +968,7 @@ p{margin:0 0 1em}
         <p class="crumb">Farmer &amp; Soil Hub</p>
         <h1>Turning community waste into agricultural wealth</h1>
         <p class="lead">Fertilizer costs are rising while soils lose organic matter, yet crop residues, market scraps and yard trimmings go unused. We train farmers to make high-grade organic fertilizer on their own farms.</p>
+      <div class="share" data-share></div>
       </div>
       <figure class="photo"><img src="images/compost.jpg" alt="A hand holding dark, crumbly compost above a garden bed" width="764" height="401" loading="lazy" style="object-position:50% 60%"></figure>
     </div>
@@ -940,7 +1046,7 @@ p{margin:0 0 1em}
             <p class="gcount">Step 6 of 6</p>
             <h3>Harvest and apply</h3>
             <p>Your fertilizer is ready when it is dark brown to black, crumbles easily in your hand and smells like fresh forest soil. Apply one to two handfuls per planting station at planting time, or side-dress growing maize, rice and vegetables.</p>
-            <a class="btn leaf" href="#contact" data-type="Farming Club">Ask for a field demonstration</a>
+            <a class="btn leaf" href="/contact" data-type="Farming Club">Ask for a field demonstration</a>
           </article>
           <div class="guide-ctrl">
             <button class="btn line" data-prev>Previous step</button>
@@ -977,7 +1083,106 @@ p{margin:0 0 1em}
           <div><dt>Farmer learning clubs</dt><dd>Grower groups collect market and household waste together, share the work of turning heaps, and produce fertilizer at community scale.</dd></div>
           <div><dt>Decomposition points</dt><dd>Sorted, safe biodegradable waste from school, market and public clean-ups goes to decomposition points, where it becomes manure for local farming clubs. Plastics are taken out first.</dd></div>
         </dl>
-        <a class="btn maize" href="#contact" data-type="Farming Club">Request a demonstration in your village</a>
+        <a class="btn maize" href="/contact" data-type="Farming Club">Request a demonstration in your village</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════ ACTIVITIES ════════════ -->
+<div class="page" data-page="activities" data-title="Activities | Chithu Foundation">
+  <header class="phead">
+    <div class="wrap">
+      <p class="crumb">Activities</p>
+      <h1>What we have been doing</h1>
+      <p class="lead">Clean-ups, plastic collection and composting days with schools, hospitals, markets and farmers in Karonga District.</p>
+      <div class="share" data-share></div>
+    </div>
+  </header>
+  <section class="sec">
+    <div class="wrap">
+      <div class="filters" id="filters" role="group" aria-label="Filter activities by type" hidden></div>
+      <div class="cards" id="actCards" aria-live="polite"></div>
+      <div class="empty" id="actEmpty" hidden></div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════ ONE ACTIVITY ════════════ -->
+<div class="page" data-page="post" data-title="Activity | Chithu Foundation">
+  <article class="post">
+    <header class="phead post-head">
+      <div class="wrap narrow">
+        <p class="crumb"><a href="/activities">All activities</a></p>
+        <h1 id="postTitle">Loading…</h1>
+        <p class="post-meta" id="postMeta"></p>
+        <div class="share" data-share></div>
+      </div>
+    </header>
+    <div class="wrap narrow post-main">
+      <figure class="post-cover" id="postCover" hidden><button type="button" class="zoom" data-i="0" aria-label="Enlarge photo"><img alt=""></button><figcaption></figcaption></figure>
+      <div class="post-body" id="postBody"></div>
+      <div class="gallery" id="postGallery" hidden></div>
+      <div class="post-foot" id="postFoot" hidden>
+        <p>Share this activity with your friends, colleagues or WhatsApp groups</p>
+        <div class="share" data-share></div>
+      </div>
+    </div>
+  </article>
+  <section class="sec wash" id="moreWrap" hidden>
+    <div class="wrap">
+      <div class="split-head"><h2>More activities</h2><p><a class="text-link" href="/activities">See all activities</a></p></div>
+      <div class="cards" id="moreCards"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════ NOT FOUND ════════════ -->
+<div class="page" data-page="notfound" data-title="Page not found | Chithu Foundation">
+  <header class="phead">
+    <div class="wrap">
+      <p class="crumb">Page not found</p>
+      <h1>We could not find that page</h1>
+      <p class="lead">The link may be out of date, or the activity may have been removed.</p>
+      <div class="btns" style="margin-top:24px"><a class="btn leaf" href="/">Go to the home page</a><a class="btn line" href="/activities">See our activities</a></div>
+    </div>
+  </header>
+</div>
+
+<!-- ════════════ STAFF SIGN IN ════════════ -->
+<div class="page" data-page="login" data-title="Staff sign in | Chithu Foundation">
+  <section class="sec wash login-sec">
+    <div class="wrap login-wrap">
+      <div class="login-intro">
+        <p class="crumb">Staff</p>
+        <h1 id="lgTitle">Staff sign in</h1>
+        <p class="lead" id="lgLead">For Chithu Foundation staff who post activities and manage the website.</p>
+      </div>
+      <div class="login-card">
+        <div id="lgSigned" hidden>
+          <h2>You are signed in</h2>
+          <p class="muted" id="lgWho"></p>
+          <div class="btns"><a class="btn leaf" href="/admin">Go to the dashboard</a><button class="btn line" type="button" data-signout>Sign out</button></div>
+        </div>
+        <div id="lgForms">
+          <div id="lgGoogleWrap" hidden>
+            <div id="lgGoogle" class="g-btn"></div>
+            <p class="or"><span>or use your email and password</span></p>
+          </div>
+          <form id="lgForm" novalidate>
+            <div class="field"><label for="lgEmail">Email address</label><input id="lgEmail" type="email" autocomplete="username" placeholder="you@example.com"></div>
+            <div class="field"><label for="lgPw">Password</label><input id="lgPw" type="password" autocomplete="current-password"></div>
+            <p class="err" id="lgErr" role="alert"></p>
+            <button class="btn leaf" type="submit" style="width:100%">Sign in</button>
+            <p class="hint" style="margin-top:14px">Forgot your password? Ask an owner to send you a new setup link.</p>
+          </form>
+          <form id="ivForm" novalidate hidden>
+            <div class="field"><label for="ivPw">Choose a password</label><input id="ivPw" type="password" autocomplete="new-password" aria-describedby="ivHint"><p class="hint" id="ivHint">At least 10 characters. A short sentence works well, e.g. "clean karonga market 2026".</p></div>
+            <div class="field"><label for="ivPw2">Type it again</label><input id="ivPw2" type="password" autocomplete="new-password"></div>
+            <p class="err" id="ivErr" role="alert"></p>
+            <button class="btn leaf" type="submit" style="width:100%">Save password and sign in</button>
+          </form>
+        </div>
       </div>
     </div>
   </section>
@@ -990,6 +1195,7 @@ p{margin:0 0 1em}
       <p class="crumb">Contact us</p>
       <h1>Partner with Chithu Foundation</h1>
       <p class="lead">A cleaner, healthier and more fertile Karonga needs every institution and household. Whether you represent a school, hospital, market, farming club or development partner, we would like to hear from you.</p>
+      <div class="share" data-share></div>
     </div>
   </header>
 
@@ -1068,6 +1274,13 @@ p{margin:0 0 1em}
 
 </main>
 
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button class="lb-btn lb-close" id="lbClose" aria-label="Close photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+</dialog>
+
 <footer class="site-foot">
   <div class="wrap foot-grid">
     <div class="foot-brand">
@@ -1082,16 +1295,18 @@ p{margin:0 0 1em}
     <nav aria-label="Footer">
       <h2>Explore</h2>
       <ul>
-        <li><a href="#about">About us</a></li>
-        <li><a href="#vision">Vision &amp; mission</a></li>
-        <li><a href="#institutions">Clean-ups</a></li>
-        <li><a href="#farmers">Farmer &amp; Soil Hub</a></li>
-        <li><a href="#contact">Contact us</a></li>
+        <li><a href="/about">About us</a></li>
+        <li><a href="/vision">Vision &amp; mission</a></li>
+        <li><a href="/institutions">Clean-ups</a></li>
+        <li><a href="/farmers">Farmer &amp; Soil Hub</a></li>
+        <li><a href="/activities">Activities</a></li>
+        <li><a href="/contact">Contact us</a></li>
       </ul>
     </nav>
   </div>
   <div class="wrap foot-base">
     <p>© <span id="yr"></span> Chithu Foundation. A non-profit, non-partisan NGO.</p>
+    <a class="staff-link" href="/login">Staff sign in</a>
   </div>
 </footer>
 
@@ -1127,29 +1342,167 @@ $$('.js-mail').forEach(a=>{a.textContent=CONFIG.email;a.href='mailto:'+CONFIG.em
 $$('.js-phone').forEach(a=>{a.textContent=CONFIG.phoneDisplay;a.href='tel:'+CONFIG.phone;});
 $('#yr').textContent=new Date().getFullYear();
 
-/* ── pages (hash router) ── */
-const pages=$$('.page'), names=pages.map(p=>p.dataset.page);
+/* ── pages (real addresses such as /about and /activities/school-clean-up) ── */
+const pages=$$('.page');
 const nav=$('#nav'), menuBtn=$('#menuBtn');
-let pendingScroll=null, pendingType=null;
+const ROUTES={about:'about',vision:'vision',institutions:'institutions',farmers:'farmers',activities:'activities',contact:'contact',login:'login'};
+const ON_SERVER=!!document.querySelector('meta[property="og:site_name"]'); /* the backend adds share-preview tags */
+const API=(window.CHITHU_API||'').replace(/\/$/,'');
+let pendingScroll=null, pendingType=null, route={page:'home'};
 function closeMenu(){nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false');}
 menuBtn.addEventListener('click',()=>{const o=nav.classList.toggle('open'); menuBtn.setAttribute('aria-expanded',String(o));});
+function readRoute(){
+  const h=location.hash.slice(1);
+  if(h&&(ROUTES[h]||h==='home')){ /* old #about style links still work */
+    const path=h==='home'?'/':'/'+h; try{history.replaceState(null,'',path+location.search);}catch(_){}
+    if(location.hash.slice(1)===h)return {page:ROUTES[h]||'home'};
+  }
+  const seg=location.pathname.replace(/\/index\.html$/,'').split('/').filter(Boolean);
+  if(!seg.length)return {page:'home'};
+  if(seg[0]==='activities'&&seg.length===2)return {page:'post',slug:decodeURIComponent(seg[1])};
+  if(seg.length===1&&ROUTES[seg[0]])return {page:ROUTES[seg[0]]};
+  return {page:ON_SERVER?'notfound':'home'};
+}
 function show(first){
-  const h=location.hash.slice(1), cur=names.includes(h)?h:'home';
+  route=readRoute(); const cur=route.page;
   pages.forEach(p=>p.classList.toggle('current',p.dataset.page===cur));
-  $$('a[data-nav]').forEach(a=>a.dataset.nav===cur?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  const navKey=cur==='post'?'activities':cur;
+  $$('a[data-nav]').forEach(a=>a.dataset.nav===navKey?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
   document.title=$('.page.current').dataset.title;
-  closeMenu(); revealPage($('.page.current'));
+  closeMenu(); revealPage($('.page.current')); fillShares();
+  if(cur==='home')loadLatest();
+  if(cur==='activities')loadActivities();
+  if(cur==='post')loadPost(route.slug);
+  if(cur==='login')initLogin();
+  $('#sbEdit').hidden=true;
   if(pendingType){selectType(pendingType); pendingType=null;}
   if(pendingScroll){const t=document.getElementById(pendingScroll); pendingScroll=null; if(t){requestAnimationFrame(()=>t.scrollIntoView()); return;}}
   if(!first)window.scrollTo(0,0);
 }
+function goTo(path){
+  if(path===location.pathname&&!location.hash){show(false); return;}
+  try{history.pushState(null,'',path);}catch(_){location.href=path; return;}
+  show(false);
+}
 document.addEventListener('click',e=>{
-  const a=e.target.closest('a[href^="#"]'); if(!a)return;
+  const a=e.target.closest('a[href]'); if(!a||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target)return;
+  const href=a.getAttribute('href');
+  if(!href.startsWith('/')||href.startsWith('//')||/^\/(admin|uploads|api|images)\b/.test(href))return;
+  e.preventDefault();
   if(a.dataset.scroll)pendingScroll=a.dataset.scroll;
   if(a.dataset.type)pendingType=a.dataset.type;
-  if(a.getAttribute('href')===location.hash){e.preventDefault(); show(false);}
+  goTo(href);
 });
-addEventListener('hashchange',()=>show(false));
+addEventListener('popstate',()=>show(false));
+
+/* ── share buttons ── */
+const ICON={
+  share:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>',
+  post:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M15 8h-1.5A1.5 1.5 0 0 0 12 9.5V21M9.5 13H15"/></svg>',
+  work:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>',
+  link:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'
+};
+function fillShares(){
+  const cur=$('.page.current'); if(!cur)return;
+  const url=location.origin+location.pathname, title=document.title.replace(/ \| Chithu Foundation$/,'');
+  $$('[data-share]',cur).forEach(box=>{
+    const text=title+' | Chithu Foundation';
+    const u=encodeURIComponent(url), t=encodeURIComponent(text);
+    box.innerHTML=(navigator.share?'<button type="button" class="sh native" data-sh="native">'+ICON.share+'<span>Share</span></button>':'')+
+      '<a class="sh" target="_blank" rel="noopener" href="https://wa.me/?text='+t+'%20'+u+'">'+ICON.chat+'<span>WhatsApp</span></a>'+
+      '<a class="sh" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+u+'">'+ICON.post+'<span>Facebook</span></a>'+
+      '<a class="sh" target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url='+u+'">'+ICON.work+'<span>LinkedIn</span></a>'+
+      '<button type="button" class="sh" data-sh="copy">'+ICON.link+'<span>Copy link</span></button>';
+    box.dataset.url=url; box.dataset.title=text;
+  });
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-sh]'); if(!b)return;
+  const box=b.closest('[data-share]'), url=box.dataset.url, title=box.dataset.title;
+  if(b.dataset.sh==='native'){try{await navigator.share({title,url});}catch(_){} return;}
+  const label=b.querySelector('span');
+  try{await navigator.clipboard.writeText(url); label.textContent='Link copied';}
+  catch(_){window.prompt('Copy this link:',url); }
+  setTimeout(()=>{label.textContent='Copy link';},2200);
+});
+
+/* ── activities ── */
+const fmtDate=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});}catch(_){return d;}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let postsCache=null;
+async function fetchPosts(){
+  if(postsCache)return postsCache;
+  const r=await fetch(API+'/api/posts',{headers:{Accept:'application/json'}});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json(); postsCache=j.posts||[]; setTimeout(()=>{postsCache=null;},60000); return postsCache;
+}
+function card(p){
+  const img=p.cover?'<img src="'+esc(p.cover.url)+'" alt="" loading="lazy"'+(p.cover.w?' width="'+p.cover.w+'" height="'+p.cover.h+'"':'')+'>':'<span class="noimg" aria-hidden="true"></span>';
+  return '<article class="card"><a href="/activities/'+encodeURIComponent(p.slug)+'"><div class="card-img">'+img+'</div><div class="card-body">'+
+    '<p class="card-tag">'+esc(p.category)+'</p><h3>'+esc(p.title)+'</h3>'+
+    '<p class="card-meta"><time datetime="'+esc(p.date)+'">'+fmtDate(p.date)+'</time>'+(p.location?'<span>'+esc(p.location)+'</span>':'')+'</p>'+
+    '<p class="card-ex">'+esc(p.excerpt)+'</p></div></a></article>';
+}
+function revealNew(box){if(!io)return; $$('.card',box).forEach((c,i)=>{c.classList.add('rv'); c.style.setProperty('--d',Math.min(i%3,5)); io.observe(c);});}
+async function loadLatest(){
+  const sec=$('#latest');
+  try{const ps=await fetchPosts(); if(!ps.length){sec.hidden=true; return;} $('#latestCards').innerHTML=ps.slice(0,3).map(card).join(''); sec.hidden=false; revealNew($('#latestCards'));}
+  catch(_){sec.hidden=true;}
+}
+let actFilter='All';
+async function loadActivities(){
+  const box=$('#actCards'), empty=$('#actEmpty'), filters=$('#filters');
+  if(!box.children.length)box.innerHTML='<p class="loading">Loading activities…</p>';
+  let ps;
+  try{ps=await fetchPosts();}
+  catch(_){box.innerHTML=''; filters.hidden=true; empty.hidden=false; empty.innerHTML=ON_SERVER?'<h2>Activities could not be loaded</h2><p>Check your internet connection and try again.</p><button class="btn leaf" type="button" id="actRetry">Try again</button>':'<h2>Activities appear here on the live website</h2><p>This is a preview without the server, so posted activities cannot be shown.</p>'; const rb=$('#actRetry'); if(rb)rb.onclick=loadActivities; return;}
+  if(!ps.length){box.innerHTML=''; filters.hidden=true; empty.hidden=false; empty.innerHTML='<h2>No activities posted yet</h2><p>Our first clean-ups and composting days will appear here soon. To take part, send us a message.</p><a class="btn leaf" href="/contact">Get in touch</a>'; return;}
+  empty.hidden=true;
+  const cats=['All',...new Set(ps.map(p=>p.category))];
+  if(!cats.includes(actFilter))actFilter='All';
+  filters.hidden=cats.length<3;
+  filters.innerHTML=cats.map(c=>'<button type="button" aria-pressed="'+(c===actFilter)+'">'+esc(c)+'</button>').join('');
+  $$('button',filters).forEach(b=>b.onclick=()=>{actFilter=b.textContent; loadActivities();});
+  box.innerHTML=ps.filter(p=>actFilter==='All'||p.category===actFilter).map(card).join('');
+  revealNew(box);
+}
+let lbImgs=[], lbI=0;
+async function loadPost(slug){
+  const t=$('#postTitle'), meta=$('#postMeta'), body=$('#postBody'), cover=$('#postCover'), gal=$('#postGallery');
+  t.textContent='Loading…'; meta.textContent=''; body.innerHTML=''; cover.hidden=true; gal.hidden=true; $('#postFoot').hidden=true; $('#moreWrap').hidden=true;
+  let p;
+  try{
+    const r=await fetch(API+'/api/posts/'+encodeURIComponent(slug),{headers:{Accept:'application/json'}});
+    if(r.status===404){pages.forEach(x=>x.classList.toggle('current',x.dataset.page==='notfound')); document.title='Activity not found | Chithu Foundation'; return;}
+    const pj=await r.json(); p=pj.post;
+    if(pj.staff&&p.id){const se=$('#sbEdit'); se.href='/admin?edit='+encodeURIComponent(p.id); se.hidden=false;}
+  }catch(_){t.textContent='This activity could not be loaded'; body.innerHTML='<p>Check your internet connection and try again.</p>'; return;}
+  if(route.page!=='post'||route.slug!==slug)return;
+  document.title=p.title+' | Chithu Foundation';
+  t.textContent=p.title;
+  meta.innerHTML='<span class="card-tag">'+esc(p.category)+'</span><time datetime="'+esc(p.date)+'">'+fmtDate(p.date)+'</time>'+(p.location?'<span>'+esc(p.location)+'</span>':'');
+  p.body.split(/\n\s*\n/).forEach(par=>{const el=document.createElement('p'); par.split('\n').forEach((line,i)=>{if(i)el.appendChild(document.createElement('br')); el.appendChild(document.createTextNode(line));}); body.appendChild(el);});
+  lbImgs=p.images||[];
+  if(lbImgs.length){
+    const c=lbImgs[0]; const im=$('img',cover); im.src=c.url; im.alt=c.caption||p.title; if(c.w){im.width=c.w; im.height=c.h;}
+    $('figcaption',cover).textContent=c.caption||''; cover.hidden=false;
+  }
+  if(lbImgs.length>1){
+    gal.innerHTML='<h2>Photos</h2><div class="gal-grid">'+lbImgs.map((im,i)=>'<button type="button" class="zoom" data-i="'+i+'" aria-label="Enlarge photo '+(i+1)+'"><img src="'+esc(im.url)+'" alt="'+esc(im.caption||'')+'" loading="lazy"></button>').join('')+'</div>';
+    gal.hidden=false;
+  }
+  $('#postFoot').hidden=false; fillShares();
+  try{const ps=await fetchPosts(); const more=ps.filter(x=>x.slug!==slug).slice(0,3); if(more.length){$('#moreCards').innerHTML=more.map(card).join(''); $('#moreWrap').hidden=false; revealNew($('#moreCards'));}}catch(_){}
+}
+/* photo viewer */
+const lb=$('#lightbox');
+function lbShow(i){lbI=(i+lbImgs.length)%lbImgs.length; const im=lbImgs[lbI]; $('#lbImg').src=im.url; $('#lbImg').alt=im.caption||''; $('#lbCap').textContent=(im.caption?im.caption+'  ':'')+'Photo '+(lbI+1)+' of '+lbImgs.length; $('#lbPrev').hidden=$('#lbNext').hidden=lbImgs.length<2;}
+document.addEventListener('click',e=>{const z=e.target.closest('.zoom'); if(!z||!lbImgs.length)return; lbShow(+z.dataset.i); if(lb.showModal)lb.showModal(); else lb.setAttribute('open','');});
+$('#lbClose').onclick=()=>lb.close(); $('#lbPrev').onclick=()=>lbShow(lbI-1); $('#lbNext').onclick=()=>lbShow(lbI+1);
+lb.addEventListener('click',e=>{if(e.target===lb)lb.close();});
+lb.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')lbShow(lbI-1); if(e.key==='ArrowRight')lbShow(lbI+1);});
+let tx=null; lb.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true}); lb.addEventListener('touchend',e=>{if(tx==null)return; const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50)lbShow(lbI+(dx<0?1:-1)); tx=null;});
 
 /* ── tabs ── */
 $$('[data-tabs]').forEach(box=>{
@@ -1199,7 +1552,7 @@ officeStatus(); setInterval(officeStatus,60000);
 /* ── contact form ── */
 const form=$('#form'), typeInputs=$$('#types input');
 function selectType(v){const i=typeInputs.find(x=>x.value===v); if(i)i.checked=true;}
-const API_CONTACT=(window.CHITHU_API||'').replace(/\/$/,'')+'/api/contact'; /* the Node backend; if it can't be reached, the email/WhatsApp fallback appears */
+const API_CONTACT=API+'/api/contact'; /* the Node backend; if it can't be reached, the email/WhatsApp fallback appears */
 let composed='';
 function setErr(id,input,msg){$('#e-'+id).textContent=msg||''; if(input)input.setAttribute('aria-invalid',msg?'true':'false');}
 function showSent(ok){
@@ -1288,6 +1641,7 @@ const QA=[
  {id:'start',q:'How do I start a compost heap?',re:/start|begin|how|make|build|compost|heap|manure|fertili/,a:'<p>Follow our six steps:</p><ul><li>Sort browns (2 parts) and greens (1 part), plus a little manure, ash or topsoil</li><li>Chop stalks to 5–10 cm and pick a shaded, well-drained spot</li><li>Build it in layers, up to 1–1.5 m high</li><li>Water each layer and cover the heap</li><li>Turn it every 7–10 days</li><li>Harvest when it is dark, crumbly and smells like forest soil</li></ul>'+go('Open the compost guide','farmers',null,'guide')},
  {id:'plastic',q:'What happens to plastic bottles?',re:/plastic|bottle|\bbags?\b|recycl|litter|throw/,a:'<p>Plastic bags and bottles should never be thrown anyhow. At our clean-ups and collection points they are picked up and kept out of drains, fields and public spaces.</p><p>Plastic bottles are separated from other waste and sent for recycling. Plastics never go into compost.</p>'+go('See how we sort waste','home',null,'sorting')},
  {id:'point',q:'What is a decomposition point?',re:/decompos|rot|organic waste|food waste|scraps/,a:'<p>A place where organic waste (food scraps, leaves, grass and crop residue) is built into layered heaps and left to break down. In four to six weeks it becomes rich organic manure.</p>'+go('Read the compost guide','farmers',null,'guide')},
+ {id:'news',q:'What activities have you done?',re:/activit|news|event|recent|photo|pictures|what have you/,a:'<p>We post our clean-ups, plastic collection and composting days, with photos, on our Activities page. You can share any of them on WhatsApp or Facebook.</p>'+go('See our activities','activities')},
  {id:'nogo',q:"What can't go in compost?",re:/\bnot\b|avoid|exclude|plastic|glass|metal|treated|shouldn|never put|bad for/,a:'<p>Keep plastics, glass, metals, medical waste and treated wood out of your compost.</p>'},
  {id:'ready',q:"How long until it's ready?",re:/long|ready|weeks|days|how fast|finished|harvest/,a:'<p>The centre of the pile heats up within 3 to 5 days. Turn it every 7 to 10 days and the manure is ready in 4 to 6 weeks.</p><p>It is ready when it is dark brown to black, crumbles easily and smells like fresh forest soil.</p>'},
  {id:'school',q:'How can my school partner?',re:/school|student|pupil/,a:'<p>Schools are our starting point. We run campus clean-up drives, student environmental clubs, waste-sorting bins and school garden compost pits.</p>'+go('Nominate a school','contact','School')},
@@ -1299,8 +1653,8 @@ const QA=[
  {id:'who',q:'Who runs Chithu Foundation?',re:/who|director|mponela|leader|founded|about/,a:'<p>Chithu Foundation is a non-governmental organisation in Karonga District, Malawi. Our Executive Director is David Mponela, and Pius Nyondo is our Information Manager.</p>'+go('About us','about')},
  {id:'contact',q:'How do I contact you?',re:/contact|phone|call|email|whatsapp|hours|open|reach|address|box/,a:'<p>Office hours: '+CONFIG.hours+'.</p><p>Phone / WhatsApp: '+CONFIG.phoneDisplay+'<br>Email: '+CONFIG.email+'<br>Post: P.O. Box 223, Karonga, Malawi</p>'+go('Send a message','contact')}
 ];
-const SUGG=['plastic','point','start','school','volunteer','contact'];
-const MATCH=['contact','volunteer','who','plastic','point','tea','demo','hospital','school','nogo','ready','why','start'];
+const SUGG=['plastic','news','point','start','school','volunteer','contact'];
+const MATCH=['contact','volunteer','who','news','plastic','point','tea','demo','hospital','school','nogo','ready','why','start'];
 const asst=$('#asst'), fab=$('#fab'), thread=$('#thread'), sugg=$('#sugg'), askin=$('#askin'); let greeted=false;
 function bubble(cls,html){const d=document.createElement('div'); d.className='bub '+cls; if(html!=null)d.innerHTML=html; thread.appendChild(d); thread.scrollTop=thread.scrollHeight; return d;}
 function answer(qa,text){
@@ -1322,9 +1676,82 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!asst.hidden)openAs
 thread.addEventListener('click',e=>{
   const b=e.target.closest('[data-go]'); if(!b)return;
   if(b.dataset.t)pendingType=b.dataset.t; if(b.dataset.sc)pendingScroll=b.dataset.sc;
-  openAsst(false); const dest='#'+b.dataset.go; if(location.hash===dest)show(false); else location.hash=dest;
+  openAsst(false); goTo(b.dataset.go==='home'?'/':'/'+b.dataset.go);
 });
 if(!reduce)setTimeout(()=>{if(!greeted)fab.classList.add('nudge');},8000);
+
+/* ── staff session (only when running on the server) ── */
+let me=null, googleId=null;
+async function loadMe(){
+  if(!ON_SERVER)return;
+  try{const r=await fetch(API+'/api/auth/me',{headers:{Accept:'application/json'},credentials:'same-origin'}); const j=await r.json(); me=j.user; googleId=j.googleClientId;}catch(_){me=null;}
+  updateStaffBar();
+}
+function updateStaffBar(){
+  const bar=$('#staffbar'); bar.hidden=!me;
+  if(me)$('#sbWho').textContent='Signed in as '+me.name;
+}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-signout]'); if(!b)return;
+  try{await fetch(API+'/api/auth/logout',{method:'POST',credentials:'same-origin'});}catch(_){}
+  me=null; updateStaffBar(); if(window.google&&google.accounts)google.accounts.id.disableAutoSelect(); if(route.page==='login')initLogin();
+});
+function afterSignIn(){ const next=new URLSearchParams(location.search).get('next'); location.href=(next&&/^\/[a-z]/.test(next))?next:'/admin'; }
+let gsiLoading=null;
+function loadGsi(){ if(window.google&&google.accounts)return Promise.resolve(); return gsiLoading||(gsiLoading=new Promise((res,rej)=>{const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.onload=res; s.onerror=rej; document.head.appendChild(s);})); }
+async function renderGoogle(hintEmail){
+  const wrap=$('#lgGoogleWrap'); if(!googleId){wrap.hidden=true; return;}
+  wrap.hidden=false;
+  try{
+    await loadGsi();
+    google.accounts.id.initialize({client_id:googleId, login_hint:hintEmail||undefined, ux_mode:'popup', callback:async resp=>{
+      const err=$('#ivForm').hidden?$('#lgErr'):$('#ivErr'); err.textContent='';
+      const r=await fetch(API+'/api/auth/google',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})});
+      const j=await r.json().catch(()=>({ok:false})); if(j.ok)afterSignIn(); else err.textContent=j.error||'Google sign-in did not work.';
+    }});
+    const box=$('#lgGoogle'); box.innerHTML='';
+    google.accounts.id.renderButton(box,{theme:'outline',size:'large',text:'signin_with',shape:'rectangular',width:Math.min(360,box.clientWidth||320)});
+  }catch(_){wrap.hidden=true;}
+}
+let invToken=null;
+async function initLogin(){
+  if(!ON_SERVER){$('#lgLead').textContent='Staff sign-in works on the live website.'; $('#lgForms').hidden=true; return;}
+  await loadMeOnce;
+  invToken=new URLSearchParams(location.search).get('invite');
+  $('#lgErr').textContent=''; $('#ivErr').textContent='';
+  if(me&&!invToken){$('#lgSigned').hidden=false; $('#lgForms').hidden=true; $('#lgWho').textContent=me.name+' ('+me.email+')'; return;}
+  $('#lgSigned').hidden=true; $('#lgForms').hidden=false;
+  if(invToken){
+    $('#lgForm').hidden=true; $('#ivForm').hidden=false;
+    const r=await fetch(API+'/api/auth/invite/'+encodeURIComponent(invToken)); const j=await r.json().catch(()=>({ok:false}));
+    if(!j.ok){$('#lgTitle').textContent='This link has expired'; $('#lgLead').textContent=j.error||'Ask an owner for a new setup link.'; $('#ivForm').hidden=true; $('#lgGoogleWrap').hidden=true; return;}
+    $('#lgTitle').textContent='Welcome, '+j.name;
+    $('#lgLead').textContent='Choose a password for '+j.email+(googleId?', or continue with the Google account that uses this email.':'.');
+    renderGoogle(j.email); $('#ivPw').focus();
+  }else{
+    $('#lgTitle').textContent='Staff sign in'; $('#lgLead').textContent='For Chithu Foundation staff who post activities and manage the website.';
+    $('#lgForm').hidden=false; $('#ivForm').hidden=true; renderGoogle();
+  }
+}
+$('#lgForm').addEventListener('submit',async e=>{
+  e.preventDefault(); const err=$('#lgErr'); err.textContent='';
+  const email=$('#lgEmail').value.trim(), password=$('#lgPw').value;
+  if(!email||!password){err.textContent='Enter your email address and password.'; return;}
+  const btn=e.target.querySelector('button[type=submit]'); btn.disabled=true;
+  try{const r=await fetch(API+'/api/auth/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})}); const j=await r.json(); if(j.ok)return afterSignIn(); err.textContent=j.error||'Could not sign in.';}
+  catch(_){err.textContent='No connection. Try again.';}
+  btn.disabled=false;
+});
+$('#ivForm').addEventListener('submit',async e=>{
+  e.preventDefault(); const err=$('#ivErr'); err.textContent='';
+  const p1=$('#ivPw').value, p2=$('#ivPw2').value;
+  if(p1.length<10){err.textContent='Use at least 10 characters.'; return;}
+  if(p1!==p2){err.textContent='The two passwords do not match.'; return;}
+  const r=await fetch(API+'/api/auth/invite/'+encodeURIComponent(invToken),{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p1})});
+  const j=await r.json().catch(()=>({ok:false})); if(j.ok)return afterSignIn();
+  err.textContent=(j.errors&&j.errors.password)||j.error||'Could not save the password.';
+});
+const loadMeOnce=loadMe();
 
 show(true);
 })();

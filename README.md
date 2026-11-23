@@ -8,14 +8,39 @@ chithu-foundation/
 │   └── images/          logo and photos
 ├── package.json         root: install with `npm install`, run with `npm start`
 ├── DEPLOY-RAILWAY.md    deployment guide
-└── backend/             small Node.js server (kept for future features)
-    ├── server.js        receives the contact form and emails it to the organisation
+├── HOW-TO-POST.md       guide for staff posting activities
+└── backend/             Node.js server
+    ├── server.js        pages + share previews, contact form email, activities API
+    ├── store.js         saves activities and photos
+    ├── auth.js          staff accounts, Google sign-in, setup links
+    ├── admin/           the /admin editor for posting activities
     ├── package.json     backend dependencies
     └── .env.example     settings template
 ```
 
+## Activities (posting news with photos)
+Staff sign in from the website (**Staff sign in** in the footer, `/login`) with their own account (email and password, or
+Google) and post activities from the dashboard at `/admin`: title, date, place, type, story and up to
+12 photos (shrunk in the browser before upload). Each activity gets its own address, e.g.
+`/activities/plastic-clean-up-at-karonga-market`, which shows a proper preview (title, text, cover photo) when shared
+on WhatsApp, Facebook or LinkedIn. Every page has share buttons.
+
+Posts are saved in `DATA_DIR/posts.json` and photos in `DATA_DIR/uploads/` (default `backend/data/`; on Railway the
+attached Volume). Back up that folder. Staff instructions: **HOW-TO-POST.md**.
+
+## Staff accounts
+The first owner comes from `ADMIN_EMAIL` + `ADMIN_PASSWORD` and can change the password at `/admin` (My account).
+Owners add other staff (roles: owner or admin); each gets a one-time setup link. Optional Google sign-in with
+`GOOGLE_CLIENT_ID`. Accounts live in `DATA_DIR/users.json` (scrypt password hashes). Setting a new `ADMIN_PASSWORD`
+resets the first owner's password on restart. Details: DEPLOY-RAILWAY.md, section 6.
+
+## Page addresses
+The site uses real addresses (`/about`, `/farmers`, `/activities`, `/contact`) served by the backend, which adds
+share-preview tags to each page. Old `#about`-style links redirect automatically. Also served: `/sitemap.xml`,
+`/robots.txt`, `/healthz`.
+
 ## How the contact form works
-Visitor fills in the form → website sends it to the backend → backend **emails it to the organisation**
+Visitor fills in the form, the website sends it to the backend, and the backend **emails it to the organisation**
 (`NOTIFY_EMAIL`). The visitor's address is set as Reply-To, so staff just press Reply in their normal inbox.
 Nothing is stored on the server; the email is the record. If the email cannot be sent, the visitor sees
 "Open in email / WhatsApp / Copy" buttons instead, so no message is lost.
@@ -28,7 +53,8 @@ Nothing is stored on the server; the email is the record. If the email cannot be
    cp backend/.env.example backend/.env
    ```
 3. Open `backend/.env` and fill in the email settings (see below).
-4. `npm start`, then open http://localhost:3000
+4. Set `ADMIN_PASSWORD` too if you want to try posting: sign in at http://localhost:3000/login with `ADMIN_EMAIL`
+5. `npm start`, then open http://localhost:3000
 
 Try it without sending real email first: set `MAIL_DRY_RUN=true` in `backend/.env`. The email is printed in the terminal.
 

@@ -1,0 +1,18 @@
+{
+  "envPrint": "5064a45adf1939d4970e6dee6f54ca17af2b9094d6d8569f0a78ced0f3e077d5",
+  "users": [
+    {
+      "id": "40af165c9520ce4d",
+      "email": "info@chithufoundation.org",
+      "name": "Chithu Foundation",
+      "role": "owner",
+      "bootstrap": true,
+      "passHash": "2f814c217f40e0338c6617cb5ccbf35c3b7485ac99cd32055ad790cbb39c3990bb8477ba7373664f683863f69452549afc9eeb40b698e0a099e4fab2e7ead93c",
+      "passSalt": "45a648857a84080e2a381eb114d38790",
+      "google": false,
+      "ver": 1,
+      "createdAt": "2026-11-23T12:09:08.216Z",
+      "invite": null
+    }
+  ]
+}

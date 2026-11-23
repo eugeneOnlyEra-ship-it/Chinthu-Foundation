@@ -1,70 +1,433 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>Staff inbox · Chithu Foundation</title>
-<link rel="icon" href="/admin-assets/logo-mark.png">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Post activities | Chithu Foundation</title>
+<link rel="icon" type="image/png" href="/images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Zilla+Slab:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--forest:#0c1f14;--green:#1d7a45;--lime:#aae75e;--paper:#fff;--bg:#f1f6ee;--line:#d9e4d4;--slate:#5a6e60}
-*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:#13261a}
-header{background:linear-gradient(135deg,#1c5a38,#0f2f1d);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-header img{width:40px;height:40px;border-radius:12px}header h1{font-size:1.1rem;margin:0;flex:1}
-button,.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;cursor:pointer;color:#13261a;text-decoration:none;display:inline-block}
-button:hover,.btn:hover{border-color:var(--green)}.primary{background:var(--lime);border-color:var(--lime);color:#0f2a17}
-header button,header .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
-main{max-width:920px;margin:0 auto;padding:22px 16px 60px}
-#login{max-width:380px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:0 20px 50px -30px rgba(20,60,35,.6)}
-#login h2{margin:0 0 6px}#login p{color:var(--slate);margin:0 0 16px}
-input{width:100%;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
-.err{color:#b3261e;min-height:1.3em;font-size:.92rem;margin:0 0 8px}
-.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}.bar .count{margin-left:auto;color:var(--slate);font-size:.92rem}
-.on{background:var(--lime);border-color:var(--lime)}
-.msg{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px;border-left:5px solid var(--lime)}
-.msg.handled{border-left-color:#c8d3c4;opacity:.78}
-.top{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}.top b{font-size:1.05rem}.tag{font-size:.78rem;font-weight:600;background:#e6f3dc;color:#1d5a2c;padding:2px 10px;border-radius:999px}
-.meta{color:var(--slate);font-size:.9rem;margin:2px 0 8px}.meta a{color:var(--green)}
-.body{white-space:pre-wrap;word-break:break-word;margin:8px 0 12px}.acts{display:flex;gap:8px;flex-wrap:wrap}.acts button{padding:5px 13px;font-size:.9rem}
-.empty{text-align:center;color:var(--slate);padding:40px 0}
-</style></head><body>
-<section id="login" hidden>
-  <h2>Staff inbox</h2><p>Chithu Foundation website messages.</p>
-  <form id="lf"><input id="pw" type="password" placeholder="Password" autocomplete="current-password" required><div class="err" id="lerr" role="alert"></div><button class="primary" style="width:100%">Sign in</button></form>
-</section>
-<div id="app" hidden>
-  <header><img src="/admin-assets/logo-mark.png" alt=""><h1>Staff inbox</h1><a class="btn" href="/api/admin/export.csv">Export CSV</a><a class="btn" href="/">View site</a><button id="out">Sign out</button></header>
-  <main>
-    <div class="bar"><button data-f="all" class="on">All</button><button data-f="new">New</button><button data-f="handled">Handled</button><button id="refresh">Refresh</button><span class="count" id="count"></span></div>
-    <div id="list"></div>
-  </main>
+:root{--ink:#1b241d;--muted:#53605a;--line:#d5ddd1;--canopy:#173d24;--leaf:#2f6b3a;--leaf-soft:#e4ece0;--wash:#f2f5ef;--maize:#e0a526;--maize-dk:#c38d14;--red:#b3261e;--slab:'Zilla Slab',Georgia,serif;--sans:'Public Sans',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 var(--sans);color:var(--ink);background:var(--wash);-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--maize);outline-offset:2px}
+h1,h2,h3{font-family:var(--slab);color:var(--canopy);line-height:1.15;margin:0 0 .4em}
+h1{font-size:1.7rem}h2{font-size:1.35rem}
+a{color:var(--leaf)}
+.top{background:var(--canopy);color:#fff;border-bottom:5px solid var(--maize)}
+.top-in{max-width:860px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.top img{width:40px;height:40px;border-radius:6px}
+.top b{font-family:var(--slab);font-size:1.15rem;flex:1;line-height:1.1}
+.top b small{display:block;font:500 .8rem var(--sans);color:#c9dbc6}
+.tabs{max-width:860px;margin:0 auto;padding:0 16px;display:flex;gap:4px;overflow-x:auto}
+.tabs button{font:600 .95rem var(--sans);color:#c9dbc6;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;cursor:pointer;white-space:nowrap}
+.tabs button:hover{color:#fff}
+.tabs button[aria-current="page"]{color:#fff;border-bottom-color:var(--maize)}
+.linkbox{background:var(--wash);border:1.5px dashed #b7c6b2;border-radius:6px;padding:14px;margin-top:14px}
+.linkbox code{display:block;word-break:break-all;font-size:.85rem;background:#fff;border:1px solid var(--line);border-radius:4px;padding:8px;margin:8px 0}
+.role{font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:3px;background:#e3eff6;color:#1d567a}
+.role.owner{background:#fbf0d6;color:#7a5a0c}
+main{max-width:860px;margin:0 auto;padding:22px 16px 80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:600 1rem var(--sans);padding:12px 18px;border-radius:4px;border:2px solid transparent;cursor:pointer;text-decoration:none;min-height:46px}
+.btn.maize{background:var(--maize);color:#1f1a0b}.btn.maize:hover{background:var(--maize-dk)}
+.btn.leaf{background:var(--leaf);color:#fff}.btn.leaf:hover{background:var(--canopy)}
+.btn.line{background:#fff;border-color:var(--line);color:var(--canopy)}.btn.line:hover{border-color:var(--leaf)}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.4);color:#fff;padding:8px 12px;min-height:0;font-size:.9rem}
+.btn.danger{background:#fff;border-color:#e7c2bf;color:var(--red)}.btn.danger:hover{border-color:var(--red)}
+.btn:disabled{opacity:.6;cursor:progress}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px}
+.login{max-width:420px;margin:8vh auto 0}
+.muted{color:var(--muted)}
+.err{color:var(--red);font-weight:600;font-size:.92rem;margin:6px 0 0}
+.err:empty{display:none}
+label,.lbl{display:block;font-weight:600;margin-bottom:6px}
+.hint{font-size:.86rem;color:var(--muted);margin:4px 0 0}
+input[type=text],input[type=date],input[type=password],select,textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:1.5px solid #c3cfbf;border-radius:4px;padding:11px 12px}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--leaf);box-shadow:0 0 0 3px rgba(224,165,38,.45)}
+textarea{min-height:200px;resize:vertical}
+.field{margin-bottom:20px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.item .th{width:84px;height:64px;border-radius:4px;object-fit:cover;background:var(--leaf-soft);display:block}
+.item h3{font-size:1.1rem;margin:0}
+.item .meta{font-size:.86rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+.badge{font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:3px;background:var(--leaf-soft);color:var(--leaf)}
+.badge.draft{background:#fbf0d6;color:#7a5a0c}
+.item .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.item .acts .btn{min-height:38px;padding:7px 12px;font-size:.92rem}
+@media(min-width:640px){.item{grid-template-columns:84px 1fr auto}.item .acts{grid-column:auto}}
+.empty{text-align:center;padding:40px 20px;border:2px dashed var(--line);border-radius:8px;background:#fff}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.ph{background:#fff;border:1.5px solid var(--line);border-radius:6px;overflow:hidden;position:relative}
+.ph.cover{border-color:var(--maize);box-shadow:0 0 0 2px var(--maize)}
+.ph img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--leaf-soft)}
+.ph .tag{position:absolute;top:6px;left:6px;background:var(--maize);color:#1f1a0b;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:3px}
+.ph .bar{height:4px;background:var(--leaf-soft)}.ph .bar i{display:block;height:100%;width:0;background:var(--leaf);transition:width .3s}
+.ph .pbody{padding:8px;display:grid;gap:6px}
+.ph input{padding:7px 8px;font-size:.88rem}
+.ph .pacts{display:flex;gap:6px}
+.ph .pacts button{flex:1;font:600 .8rem var(--sans);padding:6px 4px;border:1.5px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;color:var(--canopy)}
+.ph .pacts button:hover{border-color:var(--leaf)}
+.ph.failed{border-color:var(--red)}
+.ph .perr{color:var(--red);font-size:.8rem;font-weight:600;padding:0 8px 8px}
+.add{display:flex;align-items:center;justify-content:center;gap:10px;border:2px dashed #b7c6b2;border-radius:6px;padding:18px;background:var(--wash);cursor:pointer;font-weight:600;color:var(--canopy);text-align:center}
+.add:hover{border-color:var(--leaf);background:var(--leaf-soft)}
+.add input{position:absolute;opacity:0;width:1px;height:1px}
+.toggle{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1.5px solid var(--line);border-radius:6px;background:var(--wash);cursor:pointer}
+.toggle input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--leaf);flex:none}
+.toggle b{display:block}
+.bottom{position:sticky;bottom:0;background:rgba(242,245,239,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);margin:24px -16px -80px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;flex-wrap:wrap}
+.bottom .btn{flex:1;min-width:140px}
+.done{text-align:center}
+.done .tick{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:var(--leaf-soft);display:grid;place-items:center}
+.done .tick svg{width:34px;height:34px;fill:none;stroke:var(--leaf);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sharebox{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--canopy);color:#fff;padding:12px 18px;border-radius:6px;font-weight:600;z-index:50;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
+.help{margin-top:22px;font-size:.92rem}
+.help summary{cursor:pointer;font-weight:600;color:var(--canopy)}
+.help ul{padding-left:20px;margin:8px 0 0}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <img src="/images/logo-mark.png" alt="">
+  <b>Chithu Foundation<small id="who">Staff dashboard</small></b>
+  <a class="btn ghost" href="/">View site</a>
+  <button class="btn ghost" id="logout" hidden>Sign out</button>
 </div>
+<nav class="tabs" id="tabs" hidden aria-label="Dashboard">
+  <button type="button" data-tab="vList">Activities</button>
+  <button type="button" data-tab="vStaff" id="tabStaff" hidden>Staff</button>
+  <button type="button" data-tab="vPw">My account</button>
+</nav></header>
+
+<main>
+  <section id="vOff" class="panel login" hidden>
+    <h1>Posting is switched off</h1>
+    <p class="muted">The person who manages the website needs to set <code>ADMIN_PASSWORD</code> on the server first.</p>
+  </section>
+
+  <!-- list -->
+  <section id="vList" hidden>
+    <div class="head">
+      <h1>Your activities</h1>
+      <button class="btn maize" id="newBtn">Post a new activity</button>
+    </div>
+    <div class="list" id="list"></div>
+    <details class="help">
+      <summary>Tips for good posts</summary>
+      <ul>
+        <li>Add 3 to 8 clear photos. The first photo is the one people see when the link is shared.</li>
+        <li>Say what happened, where, who took part and what was collected or achieved.</li>
+        <li>Ask permission before posting photos where people's faces are clear, especially children.</li>
+        <li>Save as a draft if you want someone else to check it before it goes live.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- editor -->
+  <section id="vEdit" hidden>
+    <div class="head"><h1 id="edTitle">New activity</h1><button class="btn line" id="cancelBtn" type="button">Back</button></div>
+    <form id="edForm" class="panel" novalidate>
+      <div class="field"><label for="fTitle">Title</label><input id="fTitle" type="text" maxlength="140" placeholder="e.g. Plastic clean-up at Karonga Market"><p class="hint">A short, clear name for the activity.</p><p class="err" id="eTitle"></p></div>
+      <div class="row2">
+        <div class="field"><label for="fDate">Date</label><input id="fDate" type="date"><p class="err" id="eDate"></p></div>
+        <div class="field"><label for="fCat">Type of activity</label><select id="fCat"></select></div>
+      </div>
+      <div class="field"><label for="fLoc">Place <span class="muted" style="font-weight:400">(optional)</span></label><input id="fLoc" type="text" maxlength="120" placeholder="e.g. Karonga Boma"></div>
+      <div class="field"><label for="fBody">What happened?</label><textarea id="fBody" maxlength="20000" placeholder="e.g. On Saturday, 40 pupils and teachers collected plastic bags and bottles around the school…"></textarea><p class="hint">Leave an empty line between paragraphs.</p><p class="err" id="eBody"></p></div>
+
+      <div class="field">
+        <span class="lbl">Photos</span>
+        <p class="hint" style="margin-top:0">The first photo is the cover. Photos are made smaller automatically so the website stays fast.</p>
+        <div class="photos" id="photos"></div>
+        <label class="add" style="margin-top:12px"><input type="file" id="fPhotos" accept="image/jpeg,image/png,image/webp,image/*" multiple>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8 5l1.5-2h5L16 5"/></svg>
+          Add photos</label>
+      </div>
+
+      <label class="toggle" for="fPub"><input type="checkbox" id="fPub" checked><span><b>Show on the website</b><span class="muted">Untick to save it as a draft that only staff can see.</span></span></label>
+      <p class="err" id="eForm" role="alert"></p>
+
+      <div class="bottom">
+        <button class="btn leaf" id="saveBtn" type="submit">Publish activity</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- staff (owners) -->
+  <section id="vStaff" hidden>
+    <div class="head"><h1>Staff</h1></div>
+    <p class="muted" style="margin-top:-8px">People who can post activities. <b>Owners</b> can also add and remove staff.</p>
+    <div class="list" id="staffList"></div>
+    <form class="panel" id="addForm" novalidate style="margin-top:22px">
+      <h2>Add a person</h2>
+      <div class="row2">
+        <div class="field"><label for="aName">Name</label><input id="aName" type="text" maxlength="80" placeholder="e.g. Pius Nyondo"><p class="err" id="eAName"></p></div>
+        <div class="field"><label for="aEmail">Email</label><input id="aEmail" type="text" inputmode="email" autocomplete="off" placeholder="name@example.com"><p class="err" id="eAEmail"></p></div>
+      </div>
+      <div class="field"><label for="aRole">Role</label><select id="aRole"><option value="admin">Admin: posts and edits activities</option><option value="owner">Owner: also adds and removes staff</option></select></div>
+      <p class="hint" style="margin:-8px 0 16px" id="aGoogleHint"></p>
+      <button class="btn leaf" type="submit">Add and create a setup link</button>
+    </form>
+    <div class="panel" id="linkPanel" hidden style="margin-top:16px"></div>
+  </section>
+
+  <!-- my account -->
+  <section id="vPw" hidden>
+    <div class="head"><h1>My account</h1></div>
+    <div class="panel" style="margin-bottom:16px"><p style="margin:0"><b id="accName"></b><br><span class="muted" id="accEmail"></span></p><p class="hint" id="accHow"></p></div>
+    <form id="pwForm" class="panel" novalidate style="max-width:520px">
+      <h2 id="pwTitle">Change password</h2>
+      <p class="muted" style="margin-top:0">Your other phones and computers will be signed out. This one stays signed in.</p>
+      <div class="field" id="pwCurWrap"><label for="pwCur">Current password</label><input id="pwCur" type="password" autocomplete="current-password"><p class="err" id="ePwCur"></p></div>
+      <div class="field"><label for="pwNew">New password</label><input id="pwNew" type="password" autocomplete="new-password" aria-describedby="pwHint"><p class="hint" id="pwHint">At least 10 characters. A short sentence is easy to remember and hard to guess, e.g. "clean karonga market 2026".</p><p class="err" id="ePwNew"></p></div>
+      <div class="field"><label for="pwNew2">Type the new password again</label><input id="pwNew2" type="password" autocomplete="new-password"><p class="err" id="ePwNew2"></p></div>
+      <label style="display:flex;gap:8px;align-items:center;font-weight:500;margin-bottom:18px"><input type="checkbox" id="pwShow" style="width:20px;height:20px;accent-color:var(--leaf)"> Show passwords</label>
+      <button class="btn leaf" id="pwSave" style="width:100%">Change password</button>
+    </form>
+  </section>
+
+  <!-- saved -->
+  <section id="vDone" class="panel done" hidden>
+    <div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h1 id="doneTitle">Activity published</h1>
+    <p class="muted" id="doneText">It is now on the website. Share it so people can see your work.</p>
+    <div class="sharebox" id="doneShare"></div>
+    <div class="sharebox"><a class="btn line" id="doneView" target="_blank" rel="noopener">View on website</a><button class="btn leaf" id="doneBack" type="button">Back to your activities</button></div>
+  </section>
+</main>
+
 <script>
-const $=s=>document.querySelector(s); let all=[], filter='all';
-async function api(url,opt){const r=await fetch(url,Object.assign({headers:{'Content-Type':'application/json'},credentials:'same-origin'},opt)); const j=await r.json().catch(()=>({})); if(r.status===401&&url!=='/api/admin/login')show(false); return {r,j};}
-function show(ok){$('#login').hidden=ok;$('#app').hidden=!ok; if(ok)load(); else $('#pw').focus();}
-async function load(){const {j}=await api('/api/admin/messages'); if(j.ok){all=j.messages;render();}}
-function render(){
-  const rows=all.filter(m=>filter==='all'||m.status===filter), list=$('#list'); list.textContent='';
-  $('#count').textContent=all.filter(m=>m.status==='new').length+' new · '+all.length+' total';
-  if(!rows.length){const d=document.createElement('div');d.className='empty';d.textContent='No messages here yet.';list.append(d);return;}
-  for(const m of rows){
-    const c=document.createElement('article');c.className='msg '+m.status;
-    const top=document.createElement('div');top.className='top';
-    const n=document.createElement('b');n.textContent=m.name;const t=document.createElement('span');t.className='tag';t.textContent=m.type||'Other';top.append(n,t);
-    const meta=document.createElement('div');meta.className='meta';
-    const when=new Date(m.created_at.replace(' ','T')+'Z').toLocaleString();
-    const em=document.createElement('a');em.href='mailto:'+m.email;em.textContent=m.email;meta.append(when+' · ',em);
-    if(m.phone){const p=document.createElement('a');p.href='tel:'+m.phone.replace(/[^\d+]/g,'');p.textContent=m.phone;meta.append(' · ',p);}
-    const body=document.createElement('div');body.className='body';body.textContent=m.message;
-    const acts=document.createElement('div');acts.className='acts';
-    const h=document.createElement('button');h.textContent=m.status==='new'?'Mark handled':'Mark as new';
-    h.onclick=async()=>{await api('/api/admin/messages/'+m.id,{method:'PATCH',body:JSON.stringify({status:m.status==='new'?'handled':'new'})});load();};
-    const d=document.createElement('button');d.textContent='Delete';
-    d.onclick=async()=>{if(confirm('Delete this message permanently?')){await api('/api/admin/messages/'+m.id,{method:'DELETE'});load();}};
-    acts.append(h,d);c.append(top,meta,body,acts);list.append(c);
-  }
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const views=['vOff','vList','vEdit','vDone','vPw','vStaff'];
+const view=v=>{views.forEach(id=>$('#'+id).hidden=id!==v); const inside=v!=='vOff'; $('#logout').hidden=!inside; $('#tabs').hidden=!inside; $$('#tabs [data-tab]').forEach(b=>b.dataset.tab===(v==='vEdit'||v==='vDone'?'vList':v)?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')); window.scrollTo(0,0);};
+const toLogin=()=>{location.href='/login?next='+encodeURIComponent(location.pathname+location.search);};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch(_){return d;}};
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600);}
+async function api(url,opt={}){
+  const r=await fetch(url,Object.assign({credentials:'same-origin',headers:{'Content-Type':'application/json',Accept:'application/json'}},opt));
+  const j=await r.json().catch(()=>({ok:false,error:'The server did not answer properly.'}));
+  if(r.status===401){toLogin(); throw new Error('signed out');}
+  return Object.assign({status:r.status},j);
 }
-$('#lf').onsubmit=async e=>{e.preventDefault();$('#lerr').textContent='';const {j}=await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('#pw').value})});
-  if(j.ok){$('#pw').value='';show(true);}else $('#lerr').textContent=j.error||'Could not sign in.';};
-$('#out').onclick=async()=>{await api('/api/admin/logout',{method:'POST'});show(false);};
-$('#refresh').onclick=load;
-document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('on',x===b));render();});
-api('/api/admin/session').then(({j})=>show(!!j.ok));
-</script></body></html>
+let CATS=[], editing=null, photos=[], dirty=false, ME=null, GOOGLE=false;
+
+/* session */
+async function start(){
+  const [m,s2]=await Promise.all([api('/api/auth/me').catch(()=>({})),api('/api/admin/session').catch(()=>({}))]);
+  CATS=s2.categories||[]; GOOGLE=!!m.googleClientId;
+  $('#fCat').innerHTML=CATS.map(c=>'<option>'+esc(c)+'</option>').join('');
+  if(!m.enabled)return view('vOff');
+  if(!m.user)return toLogin();
+  ME=m.user; $('#who').textContent=ME.name+(ME.role==='owner'?' (owner)':'');
+  $('#tabStaff').hidden=ME.role!=='owner';
+  const q=new URLSearchParams(location.search);
+  if(q.get('edit')){const j=await api('/api/admin/posts/'+encodeURIComponent(q.get('edit'))); history.replaceState(null,'','/admin'); if(j.ok)return openEditor(j.post);}
+  if(q.get('new')){history.replaceState(null,'','/admin'); return openEditor(null);}
+  loadList();
+}
+$('#logout').onclick=async()=>{if(dirty&&!confirm('You have unsaved changes. Sign out anyway?'))return; dirty=false; await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'}); location.href='/login';};
+$$('#tabs [data-tab]').forEach(b=>b.onclick=()=>{
+  if(dirty&&!confirm('Leave without saving your changes?'))return; dirty=false;
+  ({vList:loadList,vStaff:loadStaff,vPw:openAccount})[b.dataset.tab]();
+});
+
+/* list */
+async function loadList(){
+  view('vList');
+  const j=await api('/api/admin/posts'); const box=$('#list');
+  if(!j.ok){box.innerHTML='<p class="err">'+esc(j.error)+'</p>'; return;}
+  if(!j.posts.length){box.innerHTML='<div class="empty"><h2>No activities yet</h2><p class="muted">Post your first clean-up or composting day. It only takes a few minutes.</p></div>'; return;}
+  box.innerHTML=j.posts.map(p=>'<div class="item">'+(p.cover?'<img class="th" src="'+esc(p.cover.url)+'" alt="">':'<span class="th"></span>')+
+    '<div><h3>'+esc(p.title)+'</h3><div class="meta"><span class="badge'+(p.published?'':' draft')+'">'+(p.published?'On the website':'Draft')+'</span><span>'+fmt(p.date)+'</span><span>'+p.photos+' photo'+(p.photos===1?'':'s')+'</span></div></div>'+
+    '<div class="acts"><button class="btn line" data-edit="'+p.id+'">Edit</button>'+(p.published?'<a class="btn line" href="/activities/'+encodeURIComponent(p.slug)+'" target="_blank" rel="noopener">View</a>':'')+'<button class="btn danger" data-del="'+p.id+'" data-t="'+esc(p.title)+'">Delete</button></div></div>').join('');
+}
+$('#list').addEventListener('click',async e=>{
+  const ed=e.target.closest('[data-edit]'), del=e.target.closest('[data-del]');
+  if(ed){const j=await api('/api/admin/posts/'+ed.dataset.edit); if(j.ok)openEditor(j.post);}
+  if(del&&confirm('Delete "'+del.dataset.t+'"? This removes it and its photos from the website for good.')){const j=await api('/api/admin/posts/'+del.dataset.del,{method:'DELETE'}); if(j.ok){toast('Activity deleted'); loadList();}}
+});
+$('#newBtn').onclick=()=>openEditor(null);
+
+/* editor */
+function openEditor(p){
+  editing=p; dirty=false;
+  $('#edTitle').textContent=p?'Edit activity':'New activity';
+  $('#fTitle').value=p?p.title:''; $('#fBody').value=p?p.body:''; $('#fLoc').value=p?p.location:'';
+  $('#fDate').value=p?p.date:new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+  $('#fCat').value=p?p.category:(CATS[0]||''); $('#fPub').checked=p?p.published:true;
+  photos=(p?p.images:[]).map(i=>({...i,state:'done'}));
+  ['eTitle','eDate','eBody','eForm'].forEach(id=>$('#'+id).textContent='');
+  renderPhotos(); updateSaveLabel(); view('vEdit'); if(!p)$('#fTitle').focus();
+}
+function updateSaveLabel(){$('#saveBtn').textContent=$('#fPub').checked?(editing&&editing.published?'Save changes':'Publish activity'):'Save as draft';}
+$('#fPub').onchange=()=>{dirty=true; updateSaveLabel();};
+$('#edForm').addEventListener('input',e=>{dirty=true; const m={fTitle:'eTitle',fDate:'eDate',fBody:'eBody'}[e.target.id]; if(m){$('#'+m).textContent=''; $('#eForm').textContent='';}});
+$('#cancelBtn').onclick=()=>{if(dirty&&!confirm('Leave without saving your changes?'))return; dirty=false; loadList();};
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault(); e.returnValue='';}});
+
+function renderPhotos(){
+  const box=$('#photos');
+  box.innerHTML=photos.map((p,i)=>'<div class="ph'+(i===0?' cover':'')+(p.state==='failed'?' failed':'')+'" data-i="'+i+'">'+(i===0?'<span class="tag">Cover</span>':'')+
+    '<img src="'+esc(p.preview||p.url)+'" alt="">'+(p.state==='uploading'?'<div class="bar"><i style="width:'+(p.progress||15)+'%"></i></div>':'')+
+    (p.state==='failed'?'<p class="perr">'+esc(p.error||'Upload failed')+'</p>':'')+
+    '<div class="pbody"><input type="text" maxlength="200" placeholder="Caption (optional)" value="'+esc(p.caption||'')+'" data-cap aria-label="Photo caption">'+
+    '<div class="pacts">'+(i>0?'<button type="button" data-cover>Make cover</button>':'')+'<button type="button" data-rm>Remove</button></div></div></div>').join('');
+}
+$('#photos').addEventListener('input',e=>{if(e.target.matches('[data-cap]')){photos[+e.target.closest('.ph').dataset.i].caption=e.target.value;}});
+$('#photos').addEventListener('click',e=>{
+  const ph=e.target.closest('.ph'); if(!ph)return; const i=+ph.dataset.i;
+  if(e.target.closest('[data-rm]')){photos.splice(i,1); dirty=true; renderPhotos();}
+  if(e.target.closest('[data-cover]')){photos.unshift(photos.splice(i,1)[0]); dirty=true; renderPhotos();}
+});
+
+/* resize in the browser, then upload */
+async function shrink(file){
+  let src;
+  try{src=await createImageBitmap(file,{imageOrientation:'from-image'});}
+  catch(_){
+    src=await new Promise((res,rej)=>{const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('unsupported')); im.src=URL.createObjectURL(file);});
+  }
+  const max=1600, w0=src.width, h0=src.height, k=Math.min(1,max/Math.max(w0,h0));
+  const w=Math.round(w0*k), h=Math.round(h0*k);
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(src,0,0,w,h);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
+  if(!blob)throw new Error('unsupported');
+  return {blob,w,h};
+}
+function upload(blob,onProgress){
+  return new Promise((res,rej)=>{
+    const x=new XMLHttpRequest(); x.open('POST','/api/admin/uploads'); x.setRequestHeader('Content-Type','image/jpeg');
+    x.upload.onprogress=e=>{if(e.lengthComputable)onProgress(Math.round(e.loaded/e.total*100));};
+    x.onload=()=>{let j={}; try{j=JSON.parse(x.responseText);}catch(_){} if(x.status===401){toLogin(); return rej(new Error('Please sign in again.'));} j.ok?res(j.url):rej(new Error(j.error||'Upload failed'));};
+    x.onerror=()=>rej(new Error('No connection. Try again.'));
+    x.send(blob);
+  });
+}
+$('#fPhotos').onchange=async e=>{
+  const files=Array.from(e.target.files||[]); e.target.value='';
+  const room=12-photos.length; if(files.length>room)toast('You can add up to 12 photos per activity.');
+  for(const f of files.slice(0,Math.max(0,room))){
+    const p={state:'uploading',caption:'',progress:5}; photos.push(p); dirty=true; renderPhotos();
+    try{
+      const {blob,w,h}=await shrink(f); p.preview=URL.createObjectURL(blob); p.w=w; p.h=h; renderPhotos();
+      p.url=await upload(blob,pr=>{p.progress=pr; const bar=document.querySelector('.ph[data-i="'+photos.indexOf(p)+'"] .bar i'); if(bar)bar.style.width=pr+'%';});
+      p.state='done';
+    }catch(err){p.state='failed'; p.error=err.message==='unsupported'?'This photo type cannot be used. Choose a JPG or PNG.':err.message;}
+    renderPhotos();
+  }
+};
+
+$('#edForm').onsubmit=async e=>{
+  e.preventDefault();
+  ['eTitle','eDate','eBody','eForm'].forEach(id=>$('#'+id).textContent='');
+  if(photos.some(p=>p.state==='uploading')){$('#eForm').textContent='Wait for the photos to finish uploading.'; return;}
+  const data={title:$('#fTitle').value,date:$('#fDate').value,category:$('#fCat').value,location:$('#fLoc').value,body:$('#fBody').value,published:$('#fPub').checked,
+    images:photos.filter(p=>p.state==='done').map(p=>({url:p.url,w:p.w,h:p.h,caption:p.caption||''}))};
+  const btn=$('#saveBtn'), label=btn.textContent; btn.disabled=true; btn.textContent='Saving…';
+  let j;
+  try{j=await api(editing?'/api/admin/posts/'+editing.id:'/api/admin/posts',{method:editing?'PUT':'POST',body:JSON.stringify(data)});}
+  catch(err){btn.disabled=false; btn.textContent=label; if(err.message!=='signed out')$('#eForm').textContent='No connection. Your text is still here; try again.'; return;}
+  btn.disabled=false; btn.textContent=label;
+  if(!j.ok){
+    const er=j.errors||{}; $('#eTitle').textContent=er.title||''; $('#eDate').textContent=er.date||''; $('#eBody').textContent=er.body||'';
+    $('#eForm').textContent=j.error||'Some details are missing. Check the fields marked in red.';
+    const first=er.title?'#fTitle':er.date?'#fDate':er.body?'#fBody':null; if(first)$(first).focus(); return;
+  }
+  dirty=false; showDone(j.post);
+};
+
+function showDone(p){
+  const url=location.origin+'/activities/'+encodeURIComponent(p.slug), t=encodeURIComponent(p.title+' | Chithu Foundation'), u=encodeURIComponent(url);
+  $('#doneTitle').textContent=p.published?'Activity published':'Draft saved';
+  $('#doneText').textContent=p.published?'It is now on the website. Share it so people can see your work.':'It is not on the website yet. Edit it and tick "Show on the website" when it is ready.';
+  $('#doneShare').innerHTML=p.published?('<a class="btn maize" target="_blank" rel="noopener" href="https://wa.me/?text='+t+'%20'+u+'">Share on WhatsApp</a>'+
+    '<a class="btn line" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+u+'">Share on Facebook</a>'+
+    '<button class="btn line" type="button" id="doneCopy">Copy link</button>'):'';
+  const c=$('#doneCopy'); if(c)c.onclick=async()=>{try{await navigator.clipboard.writeText(url); toast('Link copied');}catch(_){prompt('Copy this link:',url);}};
+  $('#doneView').hidden=!p.published; $('#doneView').href=url;
+  view('vDone');
+}
+$('#doneBack').onclick=loadList;
+
+/* my account */
+function openAccount(){
+  view('vPw'); $('#pwForm').reset(); ['ePwCur','ePwNew','ePwNew2'].forEach(id=>$('#'+id).textContent='');
+  ['pwCur','pwNew','pwNew2'].forEach(id=>$('#'+id).type='password');
+  $('#accName').textContent=ME.name+(ME.role==='owner'?' (owner)':' (admin)'); $('#accEmail').textContent=ME.email;
+  const ways=[]; if(ME.hasPassword)ways.push('a password'); if(ME.google)ways.push('Google');
+  $('#accHow').textContent=ways.length?'You sign in with '+ways.join(' or ')+'.'+(GOOGLE&&!ME.google?' You can also sign in with Google if your Google account uses this email.':''):'';
+  $('#pwCurWrap').hidden=!ME.hasPassword;
+  $('#pwTitle').textContent=ME.hasPassword?'Change password':'Set a password'; $('#pwSave').textContent=ME.hasPassword?'Change password':'Set password';
+}
+$('#pwShow').onchange=e=>['pwCur','pwNew','pwNew2'].forEach(id=>$('#'+id).type=e.target.checked?'text':'password');
+$('#pwForm').addEventListener('input',e=>{const m={pwCur:'ePwCur',pwNew:'ePwNew',pwNew2:'ePwNew2'}[e.target.id]; if(m)$('#'+m).textContent='';});
+$('#pwForm').onsubmit=async e=>{
+  e.preventDefault(); ['ePwCur','ePwNew','ePwNew2'].forEach(id=>$('#'+id).textContent='');
+  const cur=$('#pwCur').value, nw=$('#pwNew').value, nw2=$('#pwNew2').value;
+  if(ME.hasPassword&&!cur){$('#ePwCur').textContent='Enter your current password.'; return $('#pwCur').focus();}
+  if(nw.length<10){$('#ePwNew').textContent='Use at least 10 characters.'; return $('#pwNew').focus();}
+  if(nw!==nw2){$('#ePwNew2').textContent='The two new passwords do not match.'; return $('#pwNew2').focus();}
+  const btn=$('#pwSave'), label=btn.textContent; btn.disabled=true; btn.textContent='Saving…';
+  let j; try{j=await api('/api/auth/password',{method:'POST',body:JSON.stringify({current:cur,next:nw})});}catch(_){j={ok:false,error:'No connection. Try again.'};}
+  btn.disabled=false; btn.textContent=label;
+  if(j.ok){ME=j.user; toast(label==='Set password'?'Password set':'Password changed'); openAccount(); return;}
+  const er=j.errors||{}; $('#ePwCur').textContent=er.current||''; $('#ePwNew').textContent=er.next||(er.current?'':(j.error||'Could not change the password.'));
+};
+
+/* staff (owners) */
+async function loadStaff(){
+  view('vStaff'); $('#linkPanel').hidden=true;
+  $('#aGoogleHint').textContent=GOOGLE?'They can sign in with Google straight away if their Google account uses this email, or use the setup link to choose a password.':'You will get a setup link to send them. They open it to choose their password.';
+  const j=await api('/api/staff'); const box=$('#staffList');
+  if(!j.ok){box.innerHTML='<p class="err">'+esc(j.error)+'</p>'; return;}
+  box.innerHTML=j.staff.map(u=>{
+    const how=[u.hasPassword?'Password':'',u.google?'Google':''].filter(Boolean).join(', ');
+    return '<div class="item" style="grid-template-columns:1fr"><div><h3>'+esc(u.name)+(u.id===ME.id?' <span class="muted" style="font:400 .9rem var(--sans)">(you)</span>':'')+'</h3>'+
+      '<div class="meta"><span class="role'+(u.role==='owner'?' owner':'')+'">'+(u.role==='owner'?'Owner':'Admin')+'</span><span>'+esc(u.email)+'</span>'+
+      (u.pending?'<span class="badge draft">Not set up yet</span>':'<span>Signs in with: '+esc(how)+'</span>')+'</div></div>'+
+      (u.id===ME.id?'':'<div class="acts"><button class="btn line" data-role="'+u.id+'" data-to="'+(u.role==='owner'?'admin':'owner')+'">'+(u.role==='owner'?'Make admin':'Make owner')+'</button>'+
+      '<button class="btn line" data-link="'+u.id+'">'+(u.pending?'New setup link':'Password reset link')+'</button>'+
+      '<button class="btn danger" data-rm="'+u.id+'" data-n="'+esc(u.name)+'">Remove</button></div>')+'</div>';
+  }).join('');
+}
+function showLink(u,token,days,fresh){
+  const url=location.origin+'/login?invite='+encodeURIComponent(token);
+  const msg='Hello '+u.name+', you have been added to the Chithu Foundation website so you can post activities. Open this link to set your password (it works for '+days+' days): '+url;
+  const p=$('#linkPanel'); p.hidden=false;
+  p.innerHTML='<h2>'+(fresh?esc(u.name)+' has been added':'New link for '+esc(u.name))+'</h2><p class="muted" style="margin-top:0">Send this link to '+esc(u.name)+' privately. It works once, for '+days+' days.</p>'+
+    '<div class="linkbox"><code id="lnk"></code><div class="sharebox" style="justify-content:flex-start;margin:0"><button type="button" class="btn leaf" id="cpLink">Copy link</button><a class="btn maize" target="_blank" rel="noopener" id="waLink">Send on WhatsApp</a></div></div>'+
+    (GOOGLE?'<p class="hint">They can also sign in with Google using '+esc(u.email)+'.</p>':'');
+  $('#lnk').textContent=url; $('#waLink').href='https://wa.me/?text='+encodeURIComponent(msg);
+  $('#cpLink').onclick=async()=>{try{await navigator.clipboard.writeText(url); toast('Link copied');}catch(_){prompt('Copy this link:',url);}};
+  p.scrollIntoView({behavior:'smooth',block:'center'});
+}
+$('#addForm').onsubmit=async e=>{
+  e.preventDefault(); $('#eAName').textContent=''; $('#eAEmail').textContent='';
+  const j=await api('/api/staff',{method:'POST',body:JSON.stringify({name:$('#aName').value,email:$('#aEmail').value,role:$('#aRole').value})});
+  if(!j.ok){const er=j.errors||{}; $('#eAName').textContent=er.name||''; $('#eAEmail').textContent=er.email||j.error||''; return;}
+  $('#addForm').reset(); await loadStaff(); showLink(j.user,j.token,j.days,true);
+};
+$('#staffList').addEventListener('click',async e=>{
+  const r=e.target.closest('[data-role]'), l=e.target.closest('[data-link]'), x=e.target.closest('[data-rm]');
+  if(r){const j=await api('/api/staff/'+r.dataset.role,{method:'PATCH',body:JSON.stringify({role:r.dataset.to})}); if(!j.ok)return toast(j.error); toast('Role updated'); loadStaff();}
+  if(l){const j=await api('/api/staff/'+l.dataset.link+'/link',{method:'POST'}); if(!j.ok)return toast(j.error); showLink(j.user,j.token,j.days,false);}
+  if(x&&confirm('Remove '+x.dataset.n+'? They will no longer be able to sign in.')){const j=await api('/api/staff/'+x.dataset.rm,{method:'DELETE'}); if(!j.ok)return toast(j.error); toast('Removed'); loadStaff();}
+});
+
+start();
+})();
+</script>
+</body>
+</html>

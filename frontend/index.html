@@ -588,6 +588,9 @@ p{margin:0 0 1em}
 .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.88rem;margin:20px 0}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 
+.g-msg{font-size:.9rem;line-height:1.5;background:#fbf3df;border-left:4px solid var(--maize);padding:12px 14px;margin:0;border-radius:3px}
+.g-msg code{font-size:.85rem;word-break:break-all}
+
 </style>
 </head>
 <body>
@@ -1167,6 +1170,7 @@ p{margin:0 0 1em}
         <div id="lgForms">
           <div id="lgGoogleWrap" hidden>
             <div id="lgGoogle" class="g-btn"></div>
+            <p class="g-msg" id="lgGoogleMsg" role="status" hidden></p>
             <p class="or"><span>or use your email and password</span></p>
           </div>
           <form id="lgForm" novalidate>
@@ -1699,6 +1703,10 @@ document.addEventListener('click',async e=>{
 function afterSignIn(){ const next=new URLSearchParams(location.search).get('next'); location.href=(next&&/^\/[a-z]/.test(next))?next:'/admin'; }
 let gsiLoading=null;
 function loadGsi(){ if(window.google&&google.accounts)return Promise.resolve(); return gsiLoading||(gsiLoading=new Promise((res,rej)=>{const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.onload=res; s.onerror=rej; document.head.appendChild(s);})); }
+function googleFailed(){
+  $('#lgGoogle').innerHTML=''; const m=$('#lgGoogleMsg'); m.hidden=false;
+  m.innerHTML='<b>The Google button could not load in this browser.</b> If you use an ad blocker (uBlock, AdBlock, Brave Shields), turn it off for this site and reload, or try a private window or another browser. Your address bar must also show the same web address that was added in Google Cloud: <code>'+location.origin.replace(/[<>&]/g,'')+'</code>.';
+}
 async function renderGoogle(hintEmail){
   const wrap=$('#lgGoogleWrap'); if(!googleId){wrap.hidden=true; return;}
   wrap.hidden=false;
@@ -1709,9 +1717,10 @@ async function renderGoogle(hintEmail){
       const r=await fetch(API+'/api/auth/google',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({credential:resp.credential})});
       const j=await r.json().catch(()=>({ok:false})); if(j.ok)afterSignIn(); else err.textContent=j.error||'Google sign-in did not work.';
     }});
-    const box=$('#lgGoogle'); box.innerHTML='';
+    const box=$('#lgGoogle'); box.innerHTML=''; $('#lgGoogleMsg').hidden=true;
     google.accounts.id.renderButton(box,{theme:'outline',size:'large',text:'signin_with',shape:'rectangular',width:Math.min(360,box.clientWidth||320)});
-  }catch(_){wrap.hidden=true;}
+    setTimeout(()=>{const f=box.querySelector('iframe'); if(!f||f.offsetHeight<10)googleFailed();},4000); /* Google draws the button in a frame; if it never appears, say why */
+  }catch(_){googleFailed();}
 }
 let invToken=null;
 async function initLogin(){

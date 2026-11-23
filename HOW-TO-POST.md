@@ -4,12 +4,13 @@ You can do all of this from a phone or a computer.
 
 ## Signing in
 1. Open the website and tap **Staff sign in** at the very bottom of any page (or go to `/login`).
-2. Sign in with your email and password, or tap **Sign in with Google** if your Google account uses the email
-   the owner added for you.
+2. Tap **Sign in with Google** and choose the Google account the owner added for you.
+   (If the owner gave you a setup link and you chose a password, sign in with your email and password instead.)
 3. You go to the **dashboard**. While signed in, a brown bar at the top of the website shows
    **Dashboard**, **Post an activity** and, on an activity page, **Edit this activity**.
 
-New to the website? Open the **setup link** the owner sent you, choose a password, and you are signed in.
+New to the website? Just sign in with Google. If you do not use Google, open the **setup link** the owner sent you and
+choose a password.
 
 ## Posting an activity
 1. Tap **Post an activity** (or **Post a new activity** on the dashboard).
@@ -23,20 +24,20 @@ New to the website? Open the **setup link** the owner sent you, choose a passwor
 To change or remove an activity: dashboard, **Activities**, then **Edit** or **Delete**. An activity's link never
 changes, so links you already shared keep working.
 
-## Your password
-Dashboard, **My account**: type your current password and the new one twice (at least 10 characters).
-Your other phones and computers are signed out. If you only use Google, you can set a password here too.
-
-Forgot it? Ask an owner for a **password reset link**.
+## Passwords (only if you use one)
+Most staff sign in with Google and need no password. If you use a password: dashboard, **My account**, type your
+current password and the new one twice (at least 10 characters). Your other phones and computers are signed out.
+Forgot it? Sign in with Google instead, or ask an owner for a **password reset link**.
 
 ## For owners: managing staff
 Dashboard, **Staff**:
-- **Add a person**: enter their name and email and choose a role.
+- **Add a person**: enter their name and the email of their **Google account** (usually Gmail), and choose a role.
   - **Admin**: posts and edits activities.
   - **Owner**: also adds and removes staff.
-  You get a **setup link**. Send it to them privately (tap **Send on WhatsApp**). It works once, for 7 days.
+  Tell them to sign in with Google. You also get a **setup link** for anyone who would rather use a password;
+  send it privately (tap **Send on WhatsApp**). It works once, for 7 days.
 - **Password reset link**: for someone who forgot their password.
-- **Make owner / Make admin**: change their role. There must always be at least one owner.
+- **Make owner / Make admin**: change their role. The **main owner** (set on the server) always stays an owner.
 - **Remove**: they can no longer sign in.
 
 ## Good practice

@@ -389,15 +389,15 @@ $('#pwForm').onsubmit=async e=>{
 /* staff (owners) */
 async function loadStaff(){
   view('vStaff'); $('#linkPanel').hidden=true;
-  $('#aGoogleHint').textContent=GOOGLE?'They can sign in with Google straight away if their Google account uses this email, or use the setup link to choose a password.':'You will get a setup link to send them. They open it to choose their password.';
+  $('#aGoogleHint').textContent=GOOGLE?'Use the email of their Google account (usually a Gmail address) so they can sign in with Google straight away. You also get a setup link in case they would rather use a password.':'You will get a setup link to send them. They open it to choose their password.';
   const j=await api('/api/staff'); const box=$('#staffList');
   if(!j.ok){box.innerHTML='<p class="err">'+esc(j.error)+'</p>'; return;}
   box.innerHTML=j.staff.map(u=>{
     const how=[u.hasPassword?'Password':'',u.google?'Google':''].filter(Boolean).join(', ');
     return '<div class="item" style="grid-template-columns:1fr"><div><h3>'+esc(u.name)+(u.id===ME.id?' <span class="muted" style="font:400 .9rem var(--sans)">(you)</span>':'')+'</h3>'+
-      '<div class="meta"><span class="role'+(u.role==='owner'?' owner':'')+'">'+(u.role==='owner'?'Owner':'Admin')+'</span><span>'+esc(u.email)+'</span>'+
+      '<div class="meta"><span class="role'+(u.role==='owner'?' owner':'')+'">'+(u.firstOwner?'Main owner':u.role==='owner'?'Owner':'Admin')+'</span><span>'+esc(u.email)+'</span>'+
       (u.pending?'<span class="badge draft">Not set up yet</span>':'<span>Signs in with: '+esc(how)+'</span>')+'</div></div>'+
-      (u.id===ME.id?'':'<div class="acts"><button class="btn line" data-role="'+u.id+'" data-to="'+(u.role==='owner'?'admin':'owner')+'">'+(u.role==='owner'?'Make admin':'Make owner')+'</button>'+
+      (u.id===ME.id||u.firstOwner?(u.firstOwner&&u.id!==ME.id?'<p class="hint" style="margin:0">Main owner, set on the server.</p>':''):'<div class="acts"><button class="btn line" data-role="'+u.id+'" data-to="'+(u.role==='owner'?'admin':'owner')+'">'+(u.role==='owner'?'Make admin':'Make owner')+'</button>'+
       '<button class="btn line" data-link="'+u.id+'">'+(u.pending?'New setup link':'Password reset link')+'</button>'+
       '<button class="btn danger" data-rm="'+u.id+'" data-n="'+esc(u.name)+'">Remove</button></div>')+'</div>';
   }).join('');

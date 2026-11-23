@@ -56,38 +56,44 @@ Railway's normal disk is wiped on every deploy, so posts and photos need a **Vol
 If the logs say `No Railway Volume attached`, posts will be lost on the next deploy.
 A volume is also why this service should run as a single instance (the default).
 
-## 6. Staff accounts
-Add these **Variables**:
+## 6. Staff accounts (Sign in with Google)
+The main owner signs in with their **Google account** and adds everyone else. There is no shared password.
+
+### a. Get a Google Client ID (about 10 minutes, free)
+1. Go to https://console.cloud.google.com and create a project, e.g. "Chithu website".
+2. **APIs & Services → OAuth consent screen** (may be called **Google Auth Platform → Branding**): choose *External*,
+   enter the app name (Chithu Foundation) and a support email, and save. Then, under **Audience**, press
+   **Publish app** so anyone on the staff list can sign in (not only "test users").
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID** (or **Clients → Create client**):
+   type *Web application*. Under **Authorized JavaScript origins** add every address the site uses, e.g.
+   `https://your-app.up.railway.app` and `https://www.chithufoundation.org` (no slash at the end).
+   No redirect URI is needed.
+4. Copy the **Client ID** (it ends in `.apps.googleusercontent.com`).
+
+### b. Add these Variables
 
 | Name | Value |
 |---|---|
-| `ADMIN_EMAIL` | the first owner's email, e.g. `info@chithufoundation.org` |
-| `ADMIN_NAME` | how their name shows, e.g. `David Mponela` |
-| `ADMIN_PASSWORD` | the first owner's **starting** password (a long passphrase) |
-| `SESSION_SECRET` | a long random string (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`) |
+| `ADMIN_EMAIL` | the main owner's Google email, e.g. `david.mponela@gmail.com` |
+| `ADMIN_NAME` | optional: their name, e.g. `David Mponela` |
+| `GOOGLE_CLIENT_ID` | the Client ID from step a |
 | `SITE_URL` | optional: your final address, e.g. `https://www.chithufoundation.org`, used in share previews |
 
-Then:
-1. Open the website, click **Staff sign in** in the footer (or go to `/login`), and sign in with `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
-2. Go to **My account** and change the password.
-3. Go to **Staff** to add other people. Each new person gets a one-time setup link (valid 7 days) to send on WhatsApp.
+`SESSION_SECRET` is no longer required: the server creates one and keeps it on the Volume.
+
+### c. First sign-in
+1. Open the website, click **Staff sign in** in the footer (or go to `/login`), and press **Sign in with Google**
+   with the `ADMIN_EMAIL` account.
+2. Go to **Staff** and add people by the email of their Google account. They can sign in with Google straight away.
+   You also get a one-time setup link (valid 7 days) for anyone who would rather use a password.
    **Owners** can add and remove staff; **admins** can post and edit activities.
 
-Accounts are saved on the Volume (`/data/users.json`, passwords only as secure hashes).
-**Forgotten password:** an owner can send a "Password reset link" from the Staff page. If the first owner is locked
-out, set a **new** `ADMIN_PASSWORD` in Variables; on restart, that owner's password is reset to it.
+The `ADMIN_EMAIL` account is the **main owner**: nobody can remove or demote it from the dashboard.
+To hand over to someone else, change `ADMIN_EMAIL` in Variables; after the redeploy that person is the main owner
+(the previous one stays an owner until someone removes them). Accounts are saved on the Volume (`/data/users.json`).
 
-### Optional: Sign in with Google
-1. Go to https://console.cloud.google.com, create a project (e.g. "Chithu website").
-2. **APIs & Services → OAuth consent screen**: choose *External*, enter the app name (Chithu Foundation) and a support
-   email, save, then **Publish app** so it is not limited to test users.
-3. **APIs & Services → Credentials → Create credentials → OAuth client ID**: type *Web application*.
-   Under **Authorized JavaScript origins** add your site address(es), e.g. `https://your-app.up.railway.app` and
-   `https://www.chithufoundation.org`. No redirect URI is needed.
-4. Copy the **Client ID** (ends in `.apps.googleusercontent.com`) into a Railway Variable named `GOOGLE_CLIENT_ID`.
-
-A "Sign in with Google" button then appears on `/login`. It only lets in people whose Google email is on the
-Staff list; anyone else sees "not on the staff list".
+If you add a custom domain later, add it to **Authorized JavaScript origins** in Google Cloud too, or the Google
+button will not work on that address.
 
 ## 7. Health check and restarts (recommended)
 In the service **Settings**:

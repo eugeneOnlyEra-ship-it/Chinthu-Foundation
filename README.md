@@ -19,8 +19,8 @@ chithu-foundation/
 ```
 
 ## Activities (posting news with photos)
-Staff sign in from the website (**Staff sign in** in the footer, `/login`) with their own account (email and password, or
-Google) and post activities from the dashboard at `/admin`: title, date, place, type, story and up to
+Staff sign in from the website (**Staff sign in** in the footer, `/login`) with Google (or a password set via a setup
+link) and post activities from the dashboard at `/admin`: title, date, place, type, story and up to
 12 photos (shrunk in the browser before upload). Each activity gets its own address, e.g.
 `/activities/plastic-clean-up-at-karonga-market`, which shows a proper preview (title, text, cover photo) when shared
 on WhatsApp, Facebook or LinkedIn. Every page has share buttons.
@@ -29,10 +29,9 @@ Posts are saved in `DATA_DIR/posts.json` and photos in `DATA_DIR/uploads/` (defa
 attached Volume). Back up that folder. Staff instructions: **HOW-TO-POST.md**.
 
 ## Staff accounts
-The first owner comes from `ADMIN_EMAIL` + `ADMIN_PASSWORD` and can change the password at `/admin` (My account).
-Owners add other staff (roles: owner or admin); each gets a one-time setup link. Optional Google sign-in with
-`GOOGLE_CLIENT_ID`. Accounts live in `DATA_DIR/users.json` (scrypt password hashes). Setting a new `ADMIN_PASSWORD`
-resets the first owner's password on restart. Details: DEPLOY-RAILWAY.md, section 6.
+The main owner is the Google account in `ADMIN_EMAIL`; they sign in with Google (`GOOGLE_CLIENT_ID`) and add other
+staff (roles: owner or admin) from the dashboard. Others sign in with Google, or with a password set through a one-time
+setup link. Accounts live in `DATA_DIR/users.json`. Details: DEPLOY-RAILWAY.md, section 6.
 
 ## Page addresses
 The site uses real addresses (`/about`, `/farmers`, `/activities`, `/contact`) served by the backend, which adds
@@ -53,7 +52,8 @@ Nothing is stored on the server; the email is the record. If the email cannot be
    cp backend/.env.example backend/.env
    ```
 3. Open `backend/.env` and fill in the email settings (see below).
-4. Set `ADMIN_PASSWORD` too if you want to try posting: sign in at http://localhost:3000/login with `ADMIN_EMAIL`
+4. To try posting, set `ADMIN_EMAIL` and `GOOGLE_CLIENT_ID` (add `http://localhost:3000` to the Client ID's
+   Authorized JavaScript origins), then sign in with Google at http://localhost:3000/login
 5. `npm start`, then open http://localhost:3000
 
 Try it without sending real email first: set `MAIL_DRY_RUN=true` in `backend/.env`. The email is printed in the terminal.

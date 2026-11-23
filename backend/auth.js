@@ -1,23 +1,25 @@
 'use strict';
 /* Staff accounts for posting activities.
-   - The first owner is created from ADMIN_EMAIL + ADMIN_PASSWORD. They can change the password later.
-     Changing ADMIN_PASSWORD on the server resets that owner's password (emergency recovery).
-   - Owners can add other staff. A new person gets a one-time setup link to choose a password,
-     and can also sign in with Google if GOOGLE_CLIENT_ID is set and their Google email matches.
-   - Accounts are saved in DATA_DIR/users.json; passwords only as scrypt hashes. */
+   - The main owner is the Google account in ADMIN_EMAIL. They sign in with Google (GOOGLE_CLIENT_ID) and add others.
+     That account is always kept as an owner; to hand over, change ADMIN_EMAIL on the server and restart.
+   - Owners add other staff by email. They sign in with Google, or use a one-time setup link to choose a password.
+   - Accounts are saved in DATA_DIR/users.json; any passwords only as scrypt hashes. */
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
 module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
   const FILE = path.join(DATA_DIR, 'users.json');
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
-  const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || process.env.NOTIFY_EMAIL || 'info@chithufoundation.org').trim().toLowerCase();
-  const ADMIN_NAME = process.env.ADMIN_NAME || 'Chithu Foundation';
+  const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const ADMIN_NAME = (process.env.ADMIN_NAME || '').trim();
   const GOOGLE_CLIENT_ID = (process.env.GOOGLE_CLIENT_ID || '').trim();
-  const SECRET = process.env.SESSION_SECRET || crypto.createHash('sha256').update('chithu:' + ADMIN_PASSWORD).digest('hex');
-  if (!process.env.SESSION_SECRET) console.warn('[warn] SESSION_SECRET is not set: using a value derived from ADMIN_PASSWORD. Set SESSION_SECRET for better security.');
-  const envPrint = crypto.createHash('sha256').update('env:' + ADMIN_PASSWORD).digest('hex');
+  // Secret for signing sign-in cookies: SESSION_SECRET if given, otherwise generated once and kept on the volume
+  const SECRET = process.env.SESSION_SECRET || (() => {
+    const f = path.join(DATA_DIR, 'session-secret');
+    try { return fs.readFileSync(f, 'utf8').trim(); } catch (_) {}
+    const v = crypto.randomBytes(32).toString('hex'); fs.writeFileSync(f, v, { mode: 0o600 }); return v;
+  })();
+  if (ADMIN_EMAIL && !GOOGLE_CLIENT_ID) console.warn('[warn] ADMIN_EMAIL is set but GOOGLE_CLIENT_ID is not: the owner cannot sign in with Google until it is set (see DEPLOY-RAILWAY.md).');
   const SESSION_HOURS = 12 * 24; // stay signed in for 12 days on a phone
   const INVITE_DAYS = 7;
 
@@ -42,25 +44,23 @@ module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
     return crypto.timingSafeEqual(k, Buffer.from(u.passHash, 'hex'));
   }
 
-  // ---- first owner from ADMIN_EMAIL / ADMIN_PASSWORD (and recovery when ADMIN_PASSWORD changes) ----
+  // ---- main owner from ADMIN_EMAIL (always present and always an owner) ----
   const ready = (async () => {
-    if (!ADMIN_PASSWORD) { if (!db.users.length) console.warn('[warn] ADMIN_PASSWORD is not set and there are no staff accounts: posting is switched off.'); return; }
-    if (db.envPrint === envPrint && db.users.length) return;
-    let owner = db.users.find(u => u.bootstrap) || db.users.find(u => u.email === ADMIN_EMAIL);
-    const legacy = (() => { try { return JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'admin.json'), 'utf8')); } catch (_) { return null; } })();
-    const creds = (!db.users.length && legacy && legacy.envPrint === envPrint && legacy.hash)
-      ? { passHash: legacy.hash, passSalt: legacy.salt }       // keep a password changed with the previous version
-      : await hashPassword(ADMIN_PASSWORD);
-    if (owner) {
-      Object.assign(owner, creds, { bootstrap: true, role: 'owner', disabled: false, ver: (owner.ver || 1) + 1, invite: null });
-      console.log(`[auth] ADMIN_PASSWORD changed on the server: password for ${owner.email} reset to it.`);
-    } else {
-      owner = { id: newId(), email: ADMIN_EMAIL, name: ADMIN_NAME, role: 'owner', bootstrap: true, ...creds, google: false, ver: 1, createdAt: now(), invite: null };
-      db.users.push(owner);
-      console.log(`[auth] first owner account created: ${ADMIN_EMAIL} (password = ADMIN_PASSWORD; change it after signing in).`);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ADMIN_EMAIL)) {
+      if (!db.users.length) console.warn('[warn] ADMIN_EMAIL is not set: there are no staff accounts, so posting is switched off.');
+      return;
     }
-    db.envPrint = envPrint; save();
-    if (legacy) fs.rm(path.join(DATA_DIR, 'admin.json'), { force: true }, () => {});
+    db.users.forEach(u => { if (u.email !== ADMIN_EMAIL) u.bootstrap = false; });
+    let owner = db.users.find(u => u.email === ADMIN_EMAIL);
+    if (!owner) {
+      owner = { id: newId(), email: ADMIN_EMAIL, name: ADMIN_NAME, role: 'owner', google: false, ver: 1, createdAt: now(), invite: null };
+      db.users.push(owner);
+      console.log(`[auth] main owner account created for ${ADMIN_EMAIL}: sign in with Google at /login.`);
+    } else if (owner.role !== 'owner' || owner.disabled) {
+      Object.assign(owner, { role: 'owner', disabled: false }); console.log(`[auth] ${ADMIN_EMAIL} restored as owner.`);
+    }
+    owner.bootstrap = true; if (ADMIN_NAME && !owner.name) owner.name = ADMIN_NAME;
+    save();
   })();
 
   // ---- sessions: cookie = userId.version.expiry.signature ----
@@ -80,7 +80,7 @@ module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
     const u = db.users.find(x => x.id === id);
     return u && !u.disabled && String(u.ver || 1) === ver ? u : null;
   }
-  const publicUser = u => ({ id: u.id, name: u.name, email: u.email, role: u.role, hasPassword: !!u.passHash, google: !!u.google, pending: !u.passHash && !u.google, firstOwner: !!u.bootstrap });
+  const publicUser = u => ({ id: u.id, name: u.name || u.email, email: u.email, role: u.role, hasPassword: !!u.passHash, google: !!u.google, pending: !u.passHash && !u.google, firstOwner: !!u.bootstrap });
   // State-changing requests must come from this site (SameSite=Lax cookies + this Origin check block CSRF)
   function sameOrigin(req) {
     const o = req.headers.origin; if (!o) return true;
@@ -147,7 +147,7 @@ module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
     catch (e) { console.warn('[auth] Google sign-in rejected:', e.message); return res.status(401).json({ ok: false, error: 'Google sign-in did not work. Try again.' }); }
     const u = db.users.find(x => x.email === g.email && !x.disabled);
     if (!u) return res.status(403).json({ ok: false, error: `${g.email} is not on the staff list. Ask an owner to add you.` });
-    u.google = true; if (!u.name) u.name = g.name; u.invite = null; u.lastSignIn = now(); save();
+    u.google = true; if (!u.name) u.name = g.name || u.email; u.invite = null; u.lastSignIn = now(); save();
     startSession(res, u); res.json({ ok: true, user: publicUser(u) });
   }));
   app.post('/api/auth/logout', (req, res) => { endSession(res); res.json({ ok: true }); });
@@ -202,6 +202,7 @@ module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
     const u = db.users.find(x => x.id === req.params.id && !x.disabled); if (!u) return res.status(404).json({ ok: false, error: 'Not found.' });
     const role = (req.body || {}).role;
     if (!['owner', 'admin'].includes(role)) return res.status(400).json({ ok: false, error: 'Unknown role.' });
+    if (u.bootstrap && role !== 'owner') return res.status(400).json({ ok: false, error: 'This is the main owner set on the server (ADMIN_EMAIL), so they stay an owner.' });
     if (u.role === 'owner' && role === 'admin' && ownersLeft() <= 1) return res.status(400).json({ ok: false, error: 'There must always be at least one owner.' });
     u.role = role; save(); res.json({ ok: true, user: publicUser(u) });
   }));
@@ -212,6 +213,7 @@ module.exports = function setupAuth(app, { DATA_DIR, ON_RAILWAY, rateLimit }) {
   app.delete('/api/staff/:id', requireOwner, guard((req, res) => {
     const u = db.users.find(x => x.id === req.params.id && !x.disabled); if (!u) return res.status(404).json({ ok: false, error: 'Not found.' });
     if (u.id === req.user.id) return res.status(400).json({ ok: false, error: 'You cannot remove yourself.' });
+    if (u.bootstrap) return res.status(400).json({ ok: false, error: 'This is the main owner set on the server (ADMIN_EMAIL). Change ADMIN_EMAIL to hand over.' });
     if (u.role === 'owner' && ownersLeft() <= 1) return res.status(400).json({ ok: false, error: 'There must always be at least one owner.' });
     db.users = db.users.filter(x => x.id !== u.id); save(); res.json({ ok: true });
   }));
